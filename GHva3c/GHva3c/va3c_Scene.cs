@@ -20,9 +20,7 @@ namespace GHva3c
         /// Initializes a new instance of the va3c_Scene class.
         /// </summary>
         public va3c_Scene()
-            : base("va3c_Scene", "va3c_Scene",
-                "va3c_Scene",
-                "Category", "Subcategory")
+            : base("va3c_Scene", "va3c_Scene","va3c_Scene","va3c", "va3c")
         {
         }
 
@@ -33,8 +31,10 @@ namespace GHva3c
         {
             pManager.AddTextParameter("Geometry", "G", "va3c geometry", GH_ParamAccess.list);
             pManager.AddTextParameter("Materials", "M", "va3c materials", GH_ParamAccess.list);
-            pManager.AddTextParameter("[Lights]", "[L]", "va3c light sources", GH_ParamAccess.list);
-            pManager.AddTextParameter("[Cameras]", "[C]", "va3c cameras", GH_ParamAccess.list);
+            //pManager.AddTextParameter("[Lights]", "[L]", "va3c light sources", GH_ParamAccess.list);
+            //pManager.AddTextParameter("[Cameras]", "[C]", "va3c cameras", GH_ParamAccess.list);
+            //pManager[2].Optional = true;
+            //pManager[3].Optional = true;
         }
 
         /// <summary>
@@ -52,14 +52,12 @@ namespace GHva3c
         protected override void SolveInstance(IGH_DataAccess DA)
         {
 
-            //variables
-
              List<string> inGeometry = new List<string>();
              List<string> inMaterials = new List<string>();
 
             //get user inputs
-            if (!DA.GetData(0, ref inGeometry)) return;
-            if (!DA.GetData(1, ref inMaterials)) return;
+            if (!DA.GetDataList(0, inGeometry)) return;
+            if (!DA.GetDataList(1, inMaterials)) return;
 
             //compile geometry + materials into one object with metadata etc.
             //https://raw.githubusercontent.com/mrdoob/three.js/master/examples/obj/blenderscene/scene.js
@@ -83,6 +81,7 @@ namespace GHva3c
             foreach (string s in geoList)
             {
                 string objectName = string.Format("object.{0}", objectCounter.ToString());
+                jason.objects.objectName = new ExpandoObject();   //need new expandoObject?
                 jason.objects.objectName = s;   //need new expandoObject?
                 objectCounter++;
             }
@@ -93,8 +92,8 @@ namespace GHva3c
             {
                 //get material name:
                 string[] materialName  = s.Split(' ');
-
-                jason.materials.materialName[0] = s;
+                string matName = materialName[0];
+                jason.materials.matName = s;
             }
 
 
