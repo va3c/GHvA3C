@@ -1,8 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
+
+using GHva3c.Properties;
 
 using Grasshopper.Kernel;
 using Rhino.Geometry;
+
+using Newtonsoft.Json;
+
 
 namespace GHva3c
 {
@@ -12,25 +18,33 @@ namespace GHva3c
         /// Initializes a new instance of the va3c_material class.
         /// </summary>
         public va3c_material()
-            : base("va3c_material", "Nickname",
-                "Description",
-                "Category", "Subcategory")
+            : base("CreateMaterial", "CreateMaterial", "CreateMaterial", "GHva3c", "GHva3c")
         {
         }
 
+        
         /// <summary>
         /// Registers all the input parameters for this component.
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
+            pManager.AddColourParameter("Color", "Color", "Material Color", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Opacity", "Opacity", "Material Opacity", GH_ParamAccess.item);
+            pManager[1].Optional = true;
+            pManager.AddTextParameter("Name", "Name", "Material Name", GH_ParamAccess.item);
+            pManager[2].Optional = true;
         }
+
 
         /// <summary>
         /// Registers all the output parameters for this component.
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
+            pManager.Register_StringParam("Material", "Material", "Geometry Matherial", GH_ParamAccess.item);
+            pManager.Register_StringParam("Material Names", "Material Names", "Material Name", GH_ParamAccess.item);
         }
+
 
         /// <summary>
         /// This is the method that actually does the work.
@@ -38,7 +52,29 @@ namespace GHva3c
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            System.Drawing.Color inColor;
+            Double inOpacity = double.NaN;
+            String inName = null;
+            String outMaterial = null;
+            String outName = null;
+
+            //if (!DA.GetData(0, ref inColor)) { return; }
+            if (!DA.GetData(0, ref inColor)) { return; }
+            if (inColor == null) { return; }
+            if (!DA.GetData(1, ref inOpacity)) { return; }
+            if (!DA.GetData(1, ref inName)) { return; }
+
+            if (inOpacity == null) { inOpacity = 1; }                               //default opacity value
+            if (inName == null) { inName = DateTime.Now.ToShortDateString(); }      //autogenerate name
+            outName = inName;
+            outMaterial = ConstructMaterial(inColor, inOpacity, inName);
+            //call json conversion function
+
+
+            DA.SetData(0, outMaterial);
+            DA.SetData(1, outName);
         }
+
 
         /// <summary>
         /// Provides an Icon for the component.
@@ -48,10 +84,10 @@ namespace GHva3c
             get
             {
                 //You can add image files to your project resources and access them like this:
-                // return Resources.IconForThisComponent;
-                return null;
+                return  Resources.MatIcon;
             }
         }
+
 
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
@@ -59,6 +95,21 @@ namespace GHva3c
         public override Guid ComponentGuid
         {
             get { return new Guid("{afb20e86-13f1-4083-89e4-282299763f4c}"); }
+        }
+
+
+        public string ConstructMaterial(System.Drawing.Color Col, Double Opp, String Name)
+        {
+            dynamic jsonMat = new ExpandoObject();
+
+            jsonMat.type = "MeshLambertMaterial";
+            jsonMat.parameters = new ExpandoObject();
+
+            jsonMat.parameters.color = Col.Name;
+            jsonMat.parameters.opacity = Opp;
+            jsonMat.blending = "NormalBlending";
+
+            return JsonConvert.SerializeObject (jsonMat);
         }
     }
 }
