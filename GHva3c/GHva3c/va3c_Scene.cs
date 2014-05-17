@@ -1,8 +1,16 @@
 ﻿using System;
+using System.Dynamic;
 using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
+using System.Timers;
 
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
+
+using Newtonsoft.Json;
+
 
 namespace GHva3c
 {
@@ -56,9 +64,24 @@ namespace GHva3c
             //compile geometry + materials into one object with metadata etc.
             //https://raw.githubusercontent.com/mrdoob/three.js/master/examples/obj/blenderscene/scene.js
 
+            //create json from lists of json:
+            string outJSON = sceneJSON(inGeometry, inMaterials);
+
+            DA.SetData(0, outJSON);
 
 
         }
+
+        private string sceneJSON(List<string> geoList, List<string> materialList)
+        {
+            //create a dynamic object to populate
+            dynamic jason = new ExpandoObject();
+
+
+
+            return JsonConvert.SerializeObject(jason);
+        }
+
 
         /// <summary>
         /// Provides an Icon for the component.
