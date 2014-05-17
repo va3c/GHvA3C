@@ -12,8 +12,8 @@ namespace GHva3c
         /// Initializes a new instance of the va3c_Scene class.
         /// </summary>
         public va3c_Scene()
-            : base("va3c_Scene", "Nickname",
-                "Description",
+            : base("va3c_Scene", "va3c_Scene",
+                "va3c_Scene",
                 "Category", "Subcategory")
         {
         }
@@ -23,6 +23,9 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
+            pManager.AddTextParameter("Geometry", "G", "va3c geometry", GH_ParamAccess.item);
+            pManager.AddTextParameter("[Lights]", "[L]", "va3c light sources", GH_ParamAccess.item);
+            pManager.AddTextParameter("[Cameras]", "[C]", "va3c cameras", GH_ParamAccess.item);
         }
 
         /// <summary>
