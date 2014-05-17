@@ -90,58 +90,33 @@ namespace GHva3c
             //create a dynamic object to populate
             dynamic jason = new ExpandoObject();
 
-            //populate object properties
-            jason.geometry = new ExpandoObject();
-            jason.groups = new object[0];
-            jason.material = matName;
-            jason.position = new object[3];
-            jason.position[0] = 0; jason.position[1] = 0; jason.position[2] = 0;
-            jason.rotation = new object[3];
-            jason.rotation[0] = 0; jason.rotation[1] = 0; jason.rotation[2] = 0;
-            jason.quaternion = new object[4];
-            jason.quaternion[0] = 0; jason.quaternion[1] = 0; jason.quaternion[2] = 0; jason.quaternion[3] = 0;
-            jason.scale = new object[3];
-            jason.scale[0] = 1; jason.scale[1] = 1; jason.scale[2] = 1;
-            jason.visible = true;
-            jason.castShadow = true;
-            jason.receiveShadow = false;
-            jason.doubleSided = true;
 
+            jason.uuid = new Guid();
+            jason.type = "Geometry";
+            jason.data = new ExpandoObject();
 
-            //populate geometry object
-            jason.geometry.metadata = new ExpandoObject();
-            jason.geometry.metadata.formatVersion = 3.1;
-            jason.geometry.metadata.generatedBy = "GHva3c 0.01 Exporter";
-            jason.geometry.metadata.vertices = mesh.Vertices.Count;
-            jason.geometry.metadata.faces = mesh.Faces.Count;
-            jason.geometry.metadata.normals = 0;
-            jason.geometry.metadata.colors = 0;
-            jason.geometry.metadata.uvs = 0;
-            jason.geometry.metadata.materials = 0;
-            jason.geometry.metadata.morphTargets = 0;
-            jason.geometry.metadata.bones = 0;
+            //populate data object properties
+            jason.data.vertices = new object[mesh.Vertices.Count * 3];
+            jason.data.normals = new object[0];
+            jason.data.uvs = new object[0];
+            jason.data.faces = new object[mesh.Faces.Count * 4];
+            jason.data.scale = 1;
+            jason.data.visible = true;
+            jason.data.castShadow = true;
+            jason.data.receiveShadow = false;
+            jason.data.doubleSided = true;
 
-            jason.geometry.scale = 1.000;
-            jason.geometry.materials = new object[0];
-            jason.geometry.vertices = new object[mesh.Vertices.Count*3];
-            jason.geometry.morphTargets = new object[0];
-            jason.geometry.normals = new object[0];
-            jason.geometry.colors = new object[0];
-            jason.geometry.uvs = new object[0];
-            jason.geometry.faces = new object[mesh.Faces.Count*3];
-            jason.geometry.bones = new object[0];
-            jason.geometry.skinIndices = new object[0];
-            jason.geometry.skinWeights = new object[0];
-            jason.geometry.animation = new ExpandoObject();
+            
+
 
             //populate vertices
             int counter = 0;
             int i = 0;
             foreach (var v in mesh.Vertices)
             {
-                jason.geometry.vertices[counter++] = mesh.Vertices[i].X;
-                jason.geometry.vertices[counter++] = mesh.Vertices[i].Y;
-                jason.geometry.vertices[counter++] = mesh.Vertices[i].Z;
+                jason.data.vertices[counter++] = mesh.Vertices[i].X;
+                jason.data.vertices[counter++] = mesh.Vertices[i].Y;
+                jason.data.vertices[counter++] = mesh.Vertices[i].Z;
                 i++;
             }
 
@@ -150,9 +125,10 @@ namespace GHva3c
             i = 0;
             foreach (var f in mesh.Faces)
             {
-                jason.geometry.faces[counter++] = mesh.Faces[i].A;
-                jason.geometry.faces[counter++] = mesh.Faces[i].B;
-                jason.geometry.faces[counter++] = mesh.Faces[i].C;
+                jason.data.faces[counter++] = 0;
+                jason.data.faces[counter++] = mesh.Faces[i].A;
+                jason.data.faces[counter++] = mesh.Faces[i].B;
+                jason.data.faces[counter++] = mesh.Faces[i].C;
                 i++;
             }
 
