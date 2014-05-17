@@ -31,11 +31,10 @@ namespace GHva3c
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddMeshParameter("Mesh", "M", "Triangulated Mesh", GH_ParamAccess.item);
-            pManager.AddTextParameter("Material names", "[Mn]", "Material Nams", GH_ParamAccess.item);
             pManager.AddTextParameter("Attribute Names", "[aN]", "Attribute Names", GH_ParamAccess.list);
-            pManager[2].Optional = true;
+            pManager[1].Optional = true;
             pManager.AddNumberParameter("Attribute Values", "[aV]", "Attribute Values", GH_ParamAccess.list);
-            pManager[3].Optional = true;
+            pManager[2].Optional = true;
         }
 
         /// <summary>
@@ -54,7 +53,6 @@ namespace GHva3c
         {
             //local varaibles
             GH_Mesh mesh = null;
-            GH_String matName = null;
 
 
             //catch inputs and populate local variables
@@ -62,36 +60,26 @@ namespace GHva3c
             {
                 return;
             }
-            if (!DA.GetData(1, ref matName))
-            {
-                return;
-            }
-            if (mesh == null || matName == null)
+            if (mesh == null)
             {
                 return;
             }
 
             //create json from mesh
-            string outJSON = geoJSON(mesh.Value, matName.Value);
+            string outJSON = geoJSON(mesh.Value);
 
             DA.SetData(0, outJSON);
             
         }
 
-        private int meshCounter = 0;
 
-        private string objectName()
-        {
-            return meshCounter++.ToString();
-        }
-
-        private string geoJSON(Mesh mesh, string matName)
+        private string geoJSON(Mesh mesh)
         {
             //create a dynamic object to populate
             dynamic jason = new ExpandoObject();
 
 
-            jason.uuid = new Guid();
+            jason.uuid = Guid.NewGuid();
             jason.type = "Geometry";
             jason.data = new ExpandoObject();
 
@@ -105,9 +93,6 @@ namespace GHva3c
             jason.data.castShadow = true;
             jason.data.receiveShadow = false;
             jason.data.doubleSided = true;
-
-            
-
 
             //populate vertices
             int counter = 0;
@@ -131,7 +116,6 @@ namespace GHva3c
                 jason.data.faces[counter++] = mesh.Faces[i].C;
                 i++;
             }
-
             return JsonConvert.SerializeObject(jason);
         }
 

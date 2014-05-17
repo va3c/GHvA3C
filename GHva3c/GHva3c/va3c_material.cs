@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Dynamic;
 
-using GHva3c.Properties;
+//using GHva3c.Properties;
 
 using Grasshopper.Kernel;
 using Rhino.Geometry;
@@ -82,7 +82,8 @@ namespace GHva3c
             get
             {
                 //You can add image files to your project resources and access them like this:
-                return  Resources.MatIcon;
+                //return  Resources.MatIcon;
+                return null;
             }
         }
 
