@@ -18,7 +18,7 @@ namespace GHva3c
         /// Initializes a new instance of the va3c_material class.
         /// </summary>
         public va3c_material()
-            : base("CreateMaterial", "CreateMaterial", "CreateMaterial", "GHva3c", "GHva3c")
+            : base("CreateMaterial", "CreateMaterial", "CreateMaterial", "va3c", "va3c")
         {
         }
 
@@ -29,9 +29,9 @@ namespace GHva3c
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddColourParameter("Color", "Color", "Material Color", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Opacity", "Opacity", "Material Opacity", GH_ParamAccess.item);
+            pManager.AddNumberParameter("[Opacity]", "[Opacity]", "Material Opacity", GH_ParamAccess.item);
             pManager[1].Optional = true;
-            pManager.AddTextParameter("Name", "Name", "Material Name", GH_ParamAccess.item);
+            pManager.AddTextParameter("[Name]", "[Name]", "Material Name", GH_ParamAccess.item);
             pManager[2].Optional = true;
         }
 
@@ -52,25 +52,23 @@ namespace GHva3c
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            System.Drawing.Color inColor;
-            Double inOpacity = double.NaN;
-            String inName = null;
+            System.Drawing.Color inColor = System.Drawing.Color.White;
+            Double inOpacity = 1;
+            String inName = String.Empty;
             String outMaterial = null;
             String outName = null;
 
             //if (!DA.GetData(0, ref inColor)) { return; }
             if (!DA.GetData(0, ref inColor)) { return; }
             if (inColor == null) { return; }
-            if (!DA.GetData(1, ref inOpacity)) { return; }
-            if (!DA.GetData(1, ref inName)) { return; }
+            DA.GetData(1, ref inOpacity);
+            DA.GetData(2, ref inName);
 
-            if (inOpacity == null) { inOpacity = 1; }                               //default opacity value
-            if (inName == null) { inName = DateTime.Now.ToShortDateString(); }      //autogenerate name
+            if (inName == string.Empty) { inName = DateTime.Now.ToShortDateString(); }      //autogenerate name
             outName = inName;
             outMaterial = ConstructMaterial(inColor, inOpacity, inName);
             //call json conversion function
-
-
+            
             DA.SetData(0, outMaterial);
             DA.SetData(1, outName);
         }
@@ -100,16 +98,35 @@ namespace GHva3c
 
         public string ConstructMaterial(System.Drawing.Color Col, Double Opp, String Name)
         {
-            dynamic jsonMat = new ExpandoObject();
+            //dynamic jsonMat = new ExpandoObject();
 
-            jsonMat.type = "MeshLambertMaterial";
-            jsonMat.parameters = new ExpandoObject();
+            //jsonMat.type = "MeshLambertMaterial";
+            //jsonMat.parameters = new ExpandoObject();
 
-            jsonMat.parameters.color = Col.Name;
-            jsonMat.parameters.opacity = Opp;
-            jsonMat.blending = "NormalBlending";
+            //jsonMat.parameters.color = Col.Name;
+            //jsonMat.parameters.opacity = Opp;
+            //jsonMat.blending = "NormalBlending";
 
-            return JsonConvert.SerializeObject (jsonMat);
+            //return JsonConvert.SerializeObject (jsonMat);
+
+
+            dynamic JsonMat = new ExpandoObject();
+            JsonMat.metadata = new ExpandoObject();
+            JsonMat.metadata.version = 4.2;
+            JsonMat.metadeta.type = "material";
+            JsonMat.metadata.generator = "MaterialExporter";
+
+            JsonMat.type = "MeshPhongMaterial";
+            JsonMat.color = Col.Name;
+            JsonMat.ambient = Col.Name;
+            JsonMat.emissive = Col.Name;
+            JsonMat.specular = Col.Name;
+            JsonMat.shininess = 50;
+            JsonMat.opacity = Opp;
+            JsonMat.transparent = false;
+            JsonMat.wireframe = false;
+
+            return JsonConvert.SerializeObject(JsonMat);
         }
     }
 }
