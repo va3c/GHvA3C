@@ -69,7 +69,6 @@ namespace GHva3c
 
             DA.SetData(0, outJSON);
 
-
         }
 
         private string sceneJSON(List<string> geoList, List<string> materialList)
@@ -77,7 +76,38 @@ namespace GHva3c
             //create a dynamic object to populate
             dynamic jason = new ExpandoObject();
 
+            jason.urlBaseType = "relativeToScene";
 
+            jason.objects = new ExpandoObject();
+            int objectCounter = 0;
+            foreach (string s in geoList)
+            {
+                string objectName = string.Format("object.{0}", objectCounter.ToString());
+                jason.objects.objectName = s;   //need new expandoObject?
+                objectCounter++;
+            }
+
+            jason.materials = new ExpandoObject();
+
+            foreach (string s in materialList)
+            {
+                //get material name:
+                string[] materialName  = s.Split(' ');
+
+                jason.materials.materialName[0] = s;
+            }
+
+
+            //populate metadata object
+            jason.metadata = new ExpandoObject();
+            jason.metadata.formatVersion = 3.2;
+            jason.metadata.type = "scene";
+            jason.metadata.sourceFile = "scene.blend";
+            jason.metadata.generatedBy = "GHva3c 0.01 Exporter";
+            jason.metadata.objects = geoList.Count;
+            jason.metadata.geometries = geoList.Count;
+            jason.metadata.materials = materialList.Count;
+            jason.metadata.textures = 0;
 
             return JsonConvert.SerializeObject(jason);
         }
