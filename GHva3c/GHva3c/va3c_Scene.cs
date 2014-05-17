@@ -29,8 +29,8 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Geometry", "G", "va3c geometry", GH_ParamAccess.list);
-            pManager.AddTextParameter("Materials", "M", "va3c materials", GH_ParamAccess.list);
+            pManager.AddTextParameter("MeshGeo", "Mesh", "va3c geometry", GH_ParamAccess.list);
+            pManager.AddTextParameter("Materials", "Mat", "va3c materials", GH_ParamAccess.list);
             //pManager.AddTextParameter("[Lights]", "[L]", "va3c light sources", GH_ParamAccess.list);
             //pManager.AddTextParameter("[Cameras]", "[C]", "va3c cameras", GH_ParamAccess.list);
             //pManager[2].Optional = true;
@@ -52,18 +52,18 @@ namespace GHva3c
         protected override void SolveInstance(IGH_DataAccess DA)
         {
 
-             List<string> inGeometry = new List<string>();
+             List<string> inMeshGeometry = new List<string>();
              List<string> inMaterials = new List<string>();
 
             //get user inputs
-            if (!DA.GetDataList(0, inGeometry)) return;
+            if (!DA.GetDataList(0, inMeshGeometry)) return;
             if (!DA.GetDataList(1, inMaterials)) return;
 
             //compile geometry + materials into one object with metadata etc.
             //https://raw.githubusercontent.com/mrdoob/three.js/master/examples/obj/blenderscene/scene.js
 
             //create json from lists of json:
-            string outJSON = sceneJSON(inGeometry, inMaterials);
+            string outJSON = sceneJSON(inMeshGeometry, inMaterials);
 
             DA.SetData(0, outJSON);
 
@@ -74,39 +74,48 @@ namespace GHva3c
             //create a dynamic object to populate
             dynamic jason = new ExpandoObject();
 
-            jason.urlBaseType = "relativeToScene";
-
-            jason.objects = new ExpandoObject();
-            int objectCounter = 0;
-            foreach (string s in geoList)
-            {
-                string objectName = string.Format("object.{0}", objectCounter.ToString());
-                jason.objects.objectName = new ExpandoObject();   //need new expandoObject?
-                jason.objects.objectName = s;   //need new expandoObject?
-                objectCounter++;
-            }
-
-            jason.materials = new ExpandoObject();
-
-            foreach (string s in materialList)
-            {
-                //get material name:
-                string[] materialName  = s.Split(' ');
-                string matName = materialName[0];
-                jason.materials.matName = s;
-            }
-
-
             //populate metadata object
             jason.metadata = new ExpandoObject();
-            jason.metadata.formatVersion = 3.2;
-            jason.metadata.type = "scene";
-            jason.metadata.sourceFile = "scene.blend";
-            jason.metadata.generatedBy = "GHva3c 0.01 Exporter";
-            jason.metadata.objects = geoList.Count;
-            jason.metadata.geometries = geoList.Count;
-            jason.metadata.materials = materialList.Count;
-            jason.metadata.textures = 0;
+            jason.metadata.version = 4.3;
+            jason.metadata.type = "Object";
+            jason.metadata.generator = "ObjectExporter";
+
+            //populate mesh geometries:
+            jason.geometries = new object[geoList.Count];   //array for geometry
+            int meshCounter = 0;
+            Dictionary<string, object> geos = new Dictionary<string, object>();
+            foreach (string m in geoList)
+            {
+                jason.geometries[meshCounter++] = m;
+                
+                //pull out an object from JSON and add to a local dict
+                va3cGeometryCatcher c = JsonConvert.DeserializeObject<va3cGeometryCatcher>(m);
+                geos.Add(c.uuid, c);
+
+            }
+            
+            //populate materials:
+            jason.materials = new object[materialList.Count];
+            int matCounter = 0;
+            foreach (string m in materialList)
+            {
+                jason.materials[matCounter++] = m;
+            }
+
+       
+            jason["object"] = new ExpandoObject();
+            //create scene:
+            jason["object"].uuid = System.Guid.NewGuid();
+            jason["object"].type = "Scene";
+            int[] numbers = new int[16] { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+            jason["object"].matrix = numbers;
+            //jason["object"].children 
+
+            //create childern
+            //loop over meshes
+            
+
+
 
             return JsonConvert.SerializeObject(jason);
         }
@@ -132,5 +141,12 @@ namespace GHva3c
         {
             get { return new Guid("{392e8cc6-8e8d-41e6-96ce-cc39f1a5f31c}"); }
         }
+    }
+
+    public class va3cGeometryCatcher
+    {
+        public string uuid;
+        public string type;
+        public object data;
     }
 }

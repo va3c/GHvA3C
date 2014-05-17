@@ -74,7 +74,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="va3c_geometry.cs" />
     <Compile Include="va3c_material.cs" />
-    <Compile Include="va3c_Scene.cs" />
+    <Compile Include="va3c_Scene.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="va3c_Scene_Format3.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
