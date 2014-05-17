@@ -12,9 +12,9 @@ namespace GHva3c
         /// Initializes a new instance of the va3c_geometry class.
         /// </summary>
         public va3c_geometry()
-            : base("va3c_geometry", "Nickname",
-                "Description",
-                "Category", "Subcategory")
+            : base("va3c_geometry", "va3c_geometry",
+                "va3c_geometry",
+                "va3c", "va3c")
         {
         }
 
@@ -23,6 +23,11 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
+            pManager.AddMeshParameter("Meshes", "M", "Triangulated Meshes", GH_ParamAccess.item);
+            pManager.AddTextParameter("Materials", "[Mat]", "Materials", GH_ParamAccess.item);
+            pManager[1].Optional = true;
+            pManager.AddTextParameter("Attribute Names", "aN", "Attribute Names", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Attribute Values", "aV", "Attribute Values", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -30,6 +35,7 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
+            pManager.AddTextParameter("Geometry JSON", "G", "output to feed into scene compiler component", GH_ParamAccess.item);
         }
 
         /// <summary>
