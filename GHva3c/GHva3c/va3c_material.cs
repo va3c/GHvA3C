@@ -82,7 +82,9 @@ namespace GHva3c
             get
             {
                 //You can add image files to your project resources and access them like this:
-                return null;// Resources.MatIcon;
+
+                //return  Resources.MatIcon;
+                return null;
             }
         }
 
@@ -98,24 +100,13 @@ namespace GHva3c
 
         public string ConstructMaterial(System.Drawing.Color Col, Double Opp, String Name)
         {
-            //dynamic jsonMat = new ExpandoObject();
-
-            //jsonMat.type = "MeshLambertMaterial";
-            //jsonMat.parameters = new ExpandoObject();
-
-            //jsonMat.parameters.color = Col.Name;
-            //jsonMat.parameters.opacity = Opp;
-            //jsonMat.blending = "NormalBlending";
-
-            //return JsonConvert.SerializeObject (jsonMat);
-
-
             dynamic JsonMat = new ExpandoObject();
-            JsonMat.metadata = new ExpandoObject();
-            JsonMat.metadata.version = 4.2;
-            JsonMat.metadeta.type = "material";
-            JsonMat.metadata.generator = "MaterialExporter";
+            //JsonMat.metadata = new ExpandoObject();
+            //JsonMat.metadata.version = 4.2;
+            //JsonMat.metadata.type = "material";
+            //JsonMat.metadata.generator = "MaterialExporter";
 
+            JsonMat.uuid = Guid.NewGuid();
             JsonMat.type = "MeshPhongMaterial";
             JsonMat.color = Col.Name;
             JsonMat.ambient = Col.Name;
