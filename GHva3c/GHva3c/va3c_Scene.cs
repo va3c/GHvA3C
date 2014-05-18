@@ -12,6 +12,7 @@ using Rhino.Geometry;
 using Newtonsoft.Json;
 using System.IO;
 using System.Text.RegularExpressions;
+using GHva3c.Properties;
 
 
 namespace GHva3c
@@ -230,7 +231,7 @@ namespace GHva3c
             {
                 //You can add image files to your project resources and access them like this:
                 // return Resources.IconForThisComponent;
-                return null;
+                return Resources.va3c_magenta;
             }
         }
 

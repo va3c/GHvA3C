@@ -9,6 +9,7 @@ using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
 
 using Newtonsoft.Json;
+using GHva3c.Properties;
 
 
 namespace GHva3c
@@ -86,7 +87,7 @@ namespace GHva3c
                 //You can add image files to your project resources and access them like this:
 
                 //return  Resources.MatIcon;
-                return null;
+                return Resources.va3c_yellow;
             }
         }
 
