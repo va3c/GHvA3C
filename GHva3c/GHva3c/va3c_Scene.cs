@@ -34,7 +34,7 @@ namespace GHva3c
         {
             pManager.AddBooleanParameter("write?", "W?", "Write the va3c JSON file to disk?", GH_ParamAccess.item);
             pManager.AddTextParameter("filePath", "Fp", "Full filepath of the file you'd like to create.  Files will be overwritten automatically.", GH_ParamAccess.item); 
-            pManager.AddTextParameter("MeshGeo", "M", "va3c geometry", GH_ParamAccess.list);
+            pManager.AddTextParameter("Mesh Geo", "Me", "va3c geometry", GH_ParamAccess.list);
             pManager.AddTextParameter("Materials", "Mat", "va3c materials", GH_ParamAccess.list);
         }
 
@@ -66,7 +66,7 @@ namespace GHva3c
             //if we are not told to run, return
             if (!write)
             {
-                DA.SetData(0, "Set the 'W?' inpur to true to write the JSON file to disk.");
+                DA.SetData(0, "Set the 'W?' input to true to write the JSON file to disk.");
                 return;
             }
 

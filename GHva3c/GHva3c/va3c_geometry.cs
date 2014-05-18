@@ -43,7 +43,7 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddTextParameter("Geometry JSON", "G", "output to feed into scene compiler component", GH_ParamAccess.item);
+            pManager.AddTextParameter("JSON representation of the mesh", "Me", "Mesh JSON output to feed into scene compiler component", GH_ParamAccess.item);
         }
 
         /// <summary>

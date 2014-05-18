@@ -30,10 +30,10 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddColourParameter("Color", "Color", "Material Color", GH_ParamAccess.item);
-            pManager.AddNumberParameter("[Opacity]", "[Opacity]", "Material Opacity", GH_ParamAccess.item);
+            pManager.AddColourParameter("Color", "C", "Material Color", GH_ParamAccess.item);
+            pManager.AddNumberParameter("[Opacity]", "[O]", "Material Opacity", GH_ParamAccess.item);
             pManager[1].Optional = true;
-            pManager.AddTextParameter("[Name]", "[Name]", "Material Name", GH_ParamAccess.item);
+            pManager.AddTextParameter("[Name]", "[N]", "Material Name", GH_ParamAccess.item);
             pManager[2].Optional = true;
         }
 
@@ -43,8 +43,7 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.Register_StringParam("Material", "Material", "Geometry Matherial", GH_ParamAccess.item);
-            pManager.Register_StringParam("Material Names", "Material Names", "Material Name", GH_ParamAccess.item);
+            pManager.Register_StringParam("Material", "Mat", "Geometry Material", GH_ParamAccess.item);
         }
 
 
@@ -73,7 +72,6 @@ namespace GHva3c
             //call json conversion function
             
             DA.SetData(0, outMaterial);
-            DA.SetData(1, outName);
         }
 
 
