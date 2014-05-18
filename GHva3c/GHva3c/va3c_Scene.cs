@@ -52,8 +52,8 @@ namespace GHva3c
         protected override void SolveInstance(IGH_DataAccess DA)
         {
 
-             List<string> inMeshGeometry = new List<string>();
-             List<string> inMaterials = new List<string>();
+            List<GH_String> inMeshGeometry = new List<GH_String>();
+            List<GH_String> inMaterials = new List<GH_String>();
 
             //get user inputs
             if (!DA.GetDataList(0, inMeshGeometry)) return;
@@ -69,7 +69,7 @@ namespace GHva3c
 
         }
 
-        private string sceneJSON(List<string> geoList, List<string> materialList)
+        private string sceneJSON(List<GH_String> geoList, List<GH_String> materialList)
         {
             //create a dynamic object to populate
             dynamic jason = new ExpandoObject();
@@ -83,38 +83,56 @@ namespace GHva3c
             //populate mesh geometries:
             jason.geometries = new object[geoList.Count];   //array for geometry
             int meshCounter = 0;
-            Dictionary<string, object> geos = new Dictionary<string, object>();
-            foreach (string m in geoList)
-            {
-                jason.geometries[meshCounter++] = m;
-                
-                //pull out an object from JSON and add to a local dict
-                va3cGeometryCatcher c = JsonConvert.DeserializeObject<va3cGeometryCatcher>(m);
-                geos.Add(c.uuid, c);
-
-            }
-            
-            //populate materials:
             jason.materials = new object[materialList.Count];
             int matCounter = 0;
-            foreach (string m in materialList)
+            Dictionary<string, object> UUIDdict = new Dictionary<string, object>();
+            foreach (GH_String m in geoList)
             {
-                jason.materials[matCounter++] = m;
+                //get the mesh
+                jason.geometries[meshCounter] = m;
+
+                //get the last material if the list lengths don't match
+                if (matCounter == materialList.Count)
+                {
+                    matCounter = materialList.Count - 1;
+                }
+                jason.materials[matCounter] = materialList[matCounter];
+
+
+                //pull out an object from JSON and add to a local dict
+                va3cGeometryCatcher c = JsonConvert.DeserializeObject<va3cGeometryCatcher>(m.Value);
+                va3cMaterialCatcher mc = JsonConvert.DeserializeObject<va3cMaterialCatcher>(materialList[matCounter].Value);
+                UUIDdict.Add(c.uuid, mc.uuid);
+
+                matCounter++;
+                meshCounter++;
+
+
             }
 
+
        
-            jason["object"] = new ExpandoObject();
+            jason.OOO = new ExpandoObject();
             //create scene:
-            jason["object"].uuid = System.Guid.NewGuid();
-            jason["object"].type = "Scene";
+            jason.OOO.uuid = System.Guid.NewGuid();
+            jason.OOO.type = "Scene";
             int[] numbers = new int[16] { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
-            jason["object"].matrix = numbers;
-            //jason["object"].children 
+            jason.OOO.matrix = numbers;
+            jason.OOO.children = new object[geoList.Count];
 
             //create childern
             //loop over meshes
-            
-
+            int i = 0;
+            foreach (var g in UUIDdict.Keys)
+            {
+                jason.OOO.children[i] = new ExpandoObject();
+                jason.OOO.children[i].uuid = Guid.NewGuid();
+                jason.OOO.children[i].name = "mesh" + i.ToString();
+                jason.OOO.children[i].type = "Mesh";
+                jason.OOO.children[i].geometry = g;
+                jason.OOO.children[i].material = UUIDdict[g];
+                jason.OOO.children[i].matrix = numbers;
+            }
 
 
             return JsonConvert.SerializeObject(jason);
@@ -148,5 +166,19 @@ namespace GHva3c
         public string uuid;
         public string type;
         public object data;
+    }
+
+    public class va3cMaterialCatcher
+    {
+        public string uuid;
+        public string type;
+        public string color;
+        public string ambient;
+        public string emissive;
+        public string specular;
+        public double shininess;
+        public double opacity;
+        public bool transparent;
+        public bool wireframe;
     }
 }
