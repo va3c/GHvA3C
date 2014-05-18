@@ -99,9 +99,9 @@ namespace GHva3c
             int i = 0;
             foreach (var v in mesh.Vertices)
             {
-                jason.data.vertices[counter++] = mesh.Vertices[i].X;
-                jason.data.vertices[counter++] = mesh.Vertices[i].Y;
+                jason.data.vertices[counter++] = mesh.Vertices[i].X * -1.0;
                 jason.data.vertices[counter++] = mesh.Vertices[i].Z;
+                jason.data.vertices[counter++] = mesh.Vertices[i].Y;
                 i++;
             }
 

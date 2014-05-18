@@ -64,6 +64,7 @@ namespace GHva3c
 
             //create json from lists of json:
             string outJSON = sceneJSON(inMeshGeometry, inMaterials);
+            outJSON = outJSON.Replace("OOO", "object");
 
             DA.SetData(0, outJSON);
 
@@ -88,20 +89,21 @@ namespace GHva3c
             Dictionary<string, object> UUIDdict = new Dictionary<string, object>();
             foreach (GH_String m in geoList)
             {
-                //get the mesh
-                jason.geometries[meshCounter] = m;
-
                 //get the last material if the list lengths don't match
                 if (matCounter == materialList.Count)
                 {
                     matCounter = materialList.Count - 1;
                 }
-                jason.materials[matCounter] = materialList[matCounter];
 
-
-                //pull out an object from JSON and add to a local dict
+                //deserialize everything
                 va3cGeometryCatcher c = JsonConvert.DeserializeObject<va3cGeometryCatcher>(m.Value);
                 va3cMaterialCatcher mc = JsonConvert.DeserializeObject<va3cMaterialCatcher>(materialList[matCounter].Value);
+
+                jason.geometries[meshCounter] = c;
+                jason.materials[matCounter] = mc;
+
+                //pull out an object from JSON and add to a local dict
+                
                 UUIDdict.Add(c.uuid, mc.uuid);
 
                 matCounter++;
@@ -132,6 +134,7 @@ namespace GHva3c
                 jason.OOO.children[i].geometry = g;
                 jason.OOO.children[i].material = UUIDdict[g];
                 jason.OOO.children[i].matrix = numbers;
+                i++;
             }
 
 
