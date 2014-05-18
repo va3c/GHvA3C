@@ -167,7 +167,7 @@ namespace GHva3c
             jason.materials = new object[materialList.Count];
             int matCounter = 0;
             Dictionary<string, object> UUIDdict = new Dictionary<string, object>();
-            Dictionary<string, object> attrDict = new Dictionary<string, object>();
+            Dictionary<string, va3cAttributesCatcher> attrDict = new Dictionary<string, va3cAttributesCatcher>();
             foreach (GH_String m in geoList)
             {
                 //get the last material if the list lengths don't match
@@ -215,7 +215,7 @@ namespace GHva3c
                 jason.OOO.children[i].geometry = g;
                 jason.OOO.children[i].material = UUIDdict[g];
                 jason.OOO.children[i].matrix = numbers;
-                jason.OOO.children[i].userData = attrDict[g];
+                jason.OOO.children[i].userData = attrDict[g].userData;
                 i++;
             }
 
