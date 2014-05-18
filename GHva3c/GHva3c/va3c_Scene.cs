@@ -10,6 +10,8 @@ using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
 
 using Newtonsoft.Json;
+using System.IO;
+using System.Text.RegularExpressions;
 
 
 namespace GHva3c
@@ -29,12 +31,10 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("MeshGeo", "Mesh", "va3c geometry", GH_ParamAccess.list);
+            pManager.AddBooleanParameter("write?", "W?", "Write the va3c JSON file to disk?", GH_ParamAccess.item);
+            pManager.AddTextParameter("filePath", "Fp", "Full filepath of the file you'd like to create.  Files will be overwritten automatically.", GH_ParamAccess.item); 
+            pManager.AddTextParameter("MeshGeo", "M", "va3c geometry", GH_ParamAccess.list);
             pManager.AddTextParameter("Materials", "Mat", "va3c materials", GH_ParamAccess.list);
-            //pManager.AddTextParameter("[Lights]", "[L]", "va3c light sources", GH_ParamAccess.list);
-            //pManager.AddTextParameter("[Cameras]", "[C]", "va3c cameras", GH_ParamAccess.list);
-            //pManager[2].Optional = true;
-            //pManager[3].Optional = true;
         }
 
         /// <summary>
@@ -51,23 +51,102 @@ namespace GHva3c
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-
+            bool write = false;
+            string myFilePath = null;
             List<GH_String> inMeshGeometry = new List<GH_String>();
             List<GH_String> inMaterials = new List<GH_String>();
 
             //get user inputs
-            if (!DA.GetDataList(0, inMeshGeometry)) return;
-            if (!DA.GetDataList(1, inMaterials)) return;
+            if (!DA.GetData(0, ref write)) return;
+            if (!DA.GetData(1, ref myFilePath)) return;
+            if (!DA.GetDataList(2, inMeshGeometry)) return;
+            if (!DA.GetDataList(3, inMaterials)) return;
 
-            //compile geometry + materials into one object with metadata etc.
+            //if we are not told to run, return
+            if (!write)
+            {
+                DA.SetData(0, "Set the 'W?' inpur to true to write the JSON file to disk.");
+                return;
+            }
+
+
+            #region file path defense
+
+            //check to see if the file path has any invalid characters
+            try
+            {
+                //FIRST check to see if there is more than one semicolon in the path
+                //or if there is a semiColon anywhere in there
+                string[] colonFrags = myFilePath.Split(':');
+                if (colonFrags.Length > 2 || myFilePath.Contains(";"))
+                {
+                    throw new Exception();
+                }
+
+                //SECOND test the file name for invalid characters using regular expressions
+                //this method comes from the C# 4.0 in a nutshell book, p991
+                string inputFileName = Path.GetFileName(myFilePath);
+                char[] inValidChars = Path.GetInvalidFileNameChars();
+                string inValidString = Regex.Escape(new string(inValidChars));
+                string myNewValidFileName = Regex.Replace(inputFileName, "[" + inValidString + "]", "");
+
+                //if the replace worked, throw an error at the user.
+                if (inputFileName != myNewValidFileName)
+                {
+                    throw new Exception();
+                }
+            }
+            catch (Exception)
+            {
+                //warn the user
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+                    "Your file name is invalid - check your input and try again.");
+                return;
+            }
+
+
+            //if neither the file or directory exist, throw a warning
+            if (!File.Exists(myFilePath) && !Directory.Exists(Path.GetDirectoryName(myFilePath)))
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+                    "The directory you specified does not exist. Please double check your input. No file path will be set.");
+                return;
+            }
+
+            //if the directory exists but the file type is not .xlsx, throw a warning and set pathString = noFIle
+            if (Directory.Exists(Path.GetDirectoryName(myFilePath)) && !isJSONfile(Path.GetExtension(myFilePath)))
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+                    "Please provide a file of type .js or .json.  Something like: 'myExampleFile.json'.");
+                return;
+            }
+            #endregion
+
+
+
+            //compile geometry + materials into one JSON object with metadata etc.
             //https://raw.githubusercontent.com/mrdoob/three.js/master/examples/obj/blenderscene/scene.js
 
-            //create json from lists of json:
-            string outJSON = sceneJSON(inMeshGeometry, inMaterials);
-            outJSON = outJSON.Replace("OOO", "object");
+            try
+            {
+                //create json from lists of json:
+                string outJSON = sceneJSON(inMeshGeometry, inMaterials);
+                outJSON = outJSON.Replace("OOO", "object");
 
-            DA.SetData(0, outJSON);
 
+                //write the file to disk
+                File.WriteAllText(myFilePath, outJSON);
+
+                //report success
+                DA.SetData(0, "JSON file written successfully!");
+            }
+            catch (Exception e)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+                    "Something went wrong while trying to write the file to disk.  Here's the error:\n\n"
+                    + e.ToString());
+                return;
+            }
         }
 
         private string sceneJSON(List<GH_String> geoList, List<GH_String> materialList)
@@ -161,6 +240,19 @@ namespace GHva3c
         public override Guid ComponentGuid
         {
             get { return new Guid("{392e8cc6-8e8d-41e6-96ce-cc39f1a5f31c}"); }
+        }
+
+        private bool isJSONfile(string fileExtension)
+        {
+            if (fileExtension.ToLower() == ".js" ||
+                fileExtension.ToLower() == ".json")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 
