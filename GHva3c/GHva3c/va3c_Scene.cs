@@ -167,6 +167,7 @@ namespace GHva3c
             jason.materials = new object[materialList.Count];
             int matCounter = 0;
             Dictionary<string, object> UUIDdict = new Dictionary<string, object>();
+            Dictionary<string, object> attrDict = new Dictionary<string, object>();
             foreach (GH_String m in geoList)
             {
                 //get the last material if the list lengths don't match
@@ -177,6 +178,7 @@ namespace GHva3c
 
                 //deserialize everything
                 va3cGeometryCatcher c = JsonConvert.DeserializeObject<va3cGeometryCatcher>(m.Value);
+                va3cAttributesCatcher ac = JsonConvert.DeserializeObject<va3cAttributesCatcher>(m.Value);
                 va3cMaterialCatcher mc = JsonConvert.DeserializeObject<va3cMaterialCatcher>(materialList[matCounter].Value);
 
                 jason.geometries[meshCounter] = c;
@@ -185,14 +187,13 @@ namespace GHva3c
                 //pull out an object from JSON and add to a local dict
                 
                 UUIDdict.Add(c.uuid, mc.uuid);
+                attrDict.Add(c.uuid, ac);
 
                 matCounter++;
                 meshCounter++;
 
 
             }
-
-
        
             jason.OOO = new ExpandoObject();
             //create scene:
@@ -214,6 +215,7 @@ namespace GHva3c
                 jason.OOO.children[i].geometry = g;
                 jason.OOO.children[i].material = UUIDdict[g];
                 jason.OOO.children[i].matrix = numbers;
+                jason.OOO.children[i].userData = attrDict[g];
                 i++;
             }
 
@@ -277,5 +279,10 @@ namespace GHva3c
         public bool transparent;
         public bool wireframe;
         public int side;
+    }
+
+    public class va3cAttributesCatcher
+    {
+        public object userData;
     }
 }
