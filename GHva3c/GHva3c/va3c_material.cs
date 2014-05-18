@@ -5,6 +5,7 @@ using System.Dynamic;
 //using GHva3c.Properties;
 
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
 
 using Newtonsoft.Json;
@@ -52,7 +53,8 @@ namespace GHva3c
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            System.Drawing.Color inColor = System.Drawing.Color.White;
+            //System.Drawing.Color inColor = System.Drawing.Color.White;
+            GH_Colour inColor = null;
             Double inOpacity = 1;
             String inName = String.Empty;
             String outMaterial = null;
@@ -98,7 +100,7 @@ namespace GHva3c
         }
 
 
-        public string ConstructMaterial(System.Drawing.Color Col, Double Opp, String Name)
+        public string ConstructMaterial(GH_Colour Col, Double Opp, String Name)
         {
             dynamic JsonMat = new ExpandoObject();
             //JsonMat.metadata = new ExpandoObject();
@@ -108,16 +110,27 @@ namespace GHva3c
 
             JsonMat.uuid = Guid.NewGuid();
             JsonMat.type = "MeshPhongMaterial";
-            JsonMat.color = Col.Name;
-            JsonMat.ambient = Col.Name;
-            JsonMat.emissive = Col.Name;
-            JsonMat.specular = Col.Name;
+            JsonMat.color = hexColor(Col);
+            JsonMat.ambient = hexColor(Col);
+            JsonMat.emissive = hexColor(new GH_Colour(System.Drawing.Color.Black));
+            JsonMat.specular = hexColor(new GH_Colour(System.Drawing.Color.Gray)); 
             JsonMat.shininess = 50;
             JsonMat.opacity = Opp;
             JsonMat.transparent = false;
             JsonMat.wireframe = false;
             JsonMat.side = 2;
             return JsonConvert.SerializeObject(JsonMat);
+        }
+
+        //thanks platypus!
+        public string hexColor(GH_Colour ghColor)
+        {
+            string hexStr = "0x" + ghColor.Value.R.ToString("X2") +
+                ghColor.Value.G.ToString("X2") +
+                ghColor.Value.B.ToString("X2");
+            //dynamic hex = new ExpandoObject();
+
+            return hexStr;
         }
     }
 }
