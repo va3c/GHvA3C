@@ -116,7 +116,7 @@ namespace GHva3c
             JsonMat.opacity = Opp;
             JsonMat.transparent = false;
             JsonMat.wireframe = false;
-            JsonMat.side = "THREE.DoubleSide";
+            JsonMat.side = 2;
             return JsonConvert.SerializeObject(JsonMat);
         }
     }

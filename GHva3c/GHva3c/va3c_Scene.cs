@@ -183,5 +183,6 @@ namespace GHva3c
         public double opacity;
         public bool transparent;
         public bool wireframe;
+        public int side;
     }
 }
