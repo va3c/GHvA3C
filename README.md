@@ -6,7 +6,7 @@ Implemented by Benjamin Howes, Charlie Portelli and Jonatan Schumacher at the <a
 Installation
 ------------
 Download <a href="https://github.com/va3c/GHvA3C/releases/">the latest release</a> of the GHvA3C.zip file and extract the folder titled 'GHvA3C_Plugin' into this directory on your computer: 
-'C:\Users\USERNAME\AppData\Roaming\Grasshopper\Libraries`
+```C:\Users\USERNAME\AppData\Roaming\Grasshopper\Libraries```
 Usage
 -----
 Take a look at the sample file contained in <a href="https://github.com/va3c/GHvA3C/releases/">the latest release</a> of the GHvA3C.zip file to get you started with the JSON export functionalilty for Grasshopper.
