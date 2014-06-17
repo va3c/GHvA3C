@@ -1,4 +1,4 @@
-GHva3c
+GHvA3C
 ======
 
 Grasshopper plugin to export three.json files that can be loaded by the vA3C viewer. 
