@@ -44,6 +44,7 @@ namespace GHva3c
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddTextParameter("Message", "Out", "Message", GH_ParamAccess.item);
+            pManager.AddTextParameter("Json Presentation of Scene", "J_Scene", "Json Presentation of Scene", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -140,6 +141,7 @@ namespace GHva3c
 
                 //report success
                 DA.SetData(0, "JSON file written successfully!");
+                DA.SetData(1, outJSON);
             }
             catch (Exception e)
             {
