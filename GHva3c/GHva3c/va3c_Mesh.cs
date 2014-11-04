@@ -14,15 +14,15 @@ using Newtonsoft.Json;
 
 namespace GHva3c
 {
-    public class va3c_geometry : GH_Component
+    public class va3c_Mesh : GH_Component
     {
         /// <summary>
         /// Initializes a new instance of the va3c_geometry class.
         /// </summary>
-        public va3c_geometry()
-            : base("va3c_geometry", "va3c_geometry",
-                "va3c_geometry",
-                "va3c", "va3c")
+        public va3c_Mesh()
+            : base("va3c_Mesh", "va3c_Mesh",
+                "Creates a va3c mesh from a grasshopper mesh.",
+                "va3c", "geometry")
         {
         }
 
@@ -31,7 +31,7 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddMeshParameter("Mesh", "M", "Triangulated Mesh", GH_ParamAccess.item);
+            pManager.AddMeshParameter("Mesh", "M", "A Grasshopper Mesh", GH_ParamAccess.item);
             pManager.AddTextParameter("Attribute Names", "[aN]", "Attribute Names", GH_ParamAccess.list);
             pManager[1].Optional = true;
             pManager.AddTextParameter("Attribute Values", "[aV]", "Attribute Values", GH_ParamAccess.list);
@@ -43,7 +43,7 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddTextParameter("JSON representation of the mesh", "Me", "Mesh JSON output to feed into scene compiler component", GH_ParamAccess.item);
+            pManager.AddTextParameter("Mesh JSON", "Me", "Mesh JSON output to feed into scene compiler component", GH_ParamAccess.item);
         }
 
         /// <summary>

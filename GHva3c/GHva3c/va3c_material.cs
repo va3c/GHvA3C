@@ -14,13 +14,13 @@ using GHva3c.Properties;
 
 namespace GHva3c
 {
-    public class va3c_material : GH_Component
+    public class va3c_Material : GH_Component
     {
         /// <summary>
         /// Initializes a new instance of the va3c_material class.
         /// </summary>
-        public va3c_material()
-            : base("CreateMaterial", "CreateMaterial", "CreateMaterial", "va3c", "va3c")
+        public va3c_Material()
+            : base("va3c_Material", "va3c_Material", "Create a va3c mesh material to apply to va3c meshes.", "va3c", "materials")
         {
         }
 
@@ -43,7 +43,7 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.Register_StringParam("Material", "Mat", "Geometry Material", GH_ParamAccess.item);
+            pManager.AddTextParameter("Material", "Mat", "Geometry Material", GH_ParamAccess.item);
         }
 
 
