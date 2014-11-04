@@ -198,6 +198,16 @@ namespace GHva3c
 
         private string sceneJSON(List<GH_String> meshList, List<GH_String> meshMaterialList, List<GH_String> linesList, List<GH_String> linesMaterialList)
         {
+            //defense - if the material lists are longer than the geometry lists, trim them to be the same length
+            if (meshMaterialList.Count > meshList.Count)
+            {
+                meshMaterialList.RemoveRange(meshList.Count - 1, meshMaterialList.Count - meshList.Count);
+            }
+            if (linesMaterialList.Count > linesList.Count)
+            {
+                linesMaterialList.RemoveRange(linesList.Count - 1, linesMaterialList.Count - linesList.Count);
+            }
+
             //create a dynamic object to populate
             dynamic jason = new ExpandoObject();
 
