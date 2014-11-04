@@ -1,8 +1,16 @@
 ﻿using System;
+using System.Dynamic;
 using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
+using System.Timers;
 
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
+using GHva3c.Properties;
+
+using Newtonsoft.Json;
 
 namespace GHva3c
 {
@@ -40,7 +48,52 @@ namespace GHva3c
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            DA.SetData(0, "BUILD ME!");
+            //local variables
+            GH_Line line = null;
+
+            //catch inputs and populate local variables
+            if (!DA.GetData(0, ref line))
+            {
+                return;
+            }
+
+            //create JSON from line
+            string outJSON = lineJSON(line.Value);
+            
+            //output results
+            DA.SetData(0, outJSON);
+
+        }
+
+        private string lineJSON(Line line)
+        {
+            //create a dynamic object to populate
+            dynamic jason = new ExpandoObject();
+
+            //top level properties
+            jason.uuid = Guid.NewGuid();
+            jason.type = "Geometry";
+            jason.data = new ExpandoObject();
+
+            //populate data object properties
+            jason.data.vertices = new object[6];
+            jason.data.vertices[0] = line.FromX * -1.0;
+            jason.data.vertices[1] = line.FromZ;
+            jason.data.vertices[2] = line.FromY;
+            jason.data.vertices[3] = line.ToX * -1.0;
+            jason.data.vertices[4] = line.ToZ;
+            jason.data.vertices[5] = line.ToY;
+            jason.data.normals = new object[0];
+            jason.data.uvs = new object[0];
+            jason.data.faces = new object[0];
+            jason.data.scale = 1;
+            jason.data.visible = true;
+            jason.data.castShadow = true;
+            jason.data.receiveShadow = false;
+
+
+            //return
+            return JsonConvert.SerializeObject(jason);
         }
 
         /// <summary>

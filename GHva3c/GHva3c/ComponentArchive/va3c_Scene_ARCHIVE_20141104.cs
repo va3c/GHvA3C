@@ -17,12 +17,20 @@ using GHva3c.Properties;
 
 namespace GHva3c
 {
-    public class va3c_Scene : GH_Component
+    public class va3c_Scene_ARCHIVE_20141104 : GH_Component
     {
+        public override GH_Exposure Exposure
+        {
+            get
+            {
+                return GH_Exposure.hidden;
+            }
+        }
+
         /// <summary>
         /// Initializes a new instance of the va3c_Scene class.
         /// </summary>
-        public va3c_Scene()
+        public va3c_Scene_ARCHIVE_20141104()
             : base("va3c_Scene", "va3c_Scene","va3c_Scene","va3c", "va3c")
         {
         }
@@ -259,32 +267,5 @@ namespace GHva3c
                 return false;
             }
         }
-    }
-
-    public class va3cGeometryCatcher
-    {
-        public string uuid;
-        public string type;
-        public object data;
-    }
-
-    public class va3cMaterialCatcher
-    {
-        public string uuid;
-        public string type;
-        public string color;
-        public string ambient;
-        public string emissive;
-        public string specular;
-        public double shininess;
-        public double opacity;
-        public bool transparent;
-        public bool wireframe;
-        public int side;
-    }
-
-    public class va3cAttributesCatcher
-    {
-        public object userData;
     }
 }

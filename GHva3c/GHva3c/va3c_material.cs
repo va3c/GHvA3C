@@ -109,27 +109,16 @@ namespace GHva3c
 
             JsonMat.uuid = Guid.NewGuid();
             JsonMat.type = "MeshPhongMaterial";
-            JsonMat.color = hexColor(Col);
-            JsonMat.ambient = hexColor(Col);
-            JsonMat.emissive = hexColor(new GH_Colour(System.Drawing.Color.Black));
-            JsonMat.specular = hexColor(new GH_Colour(System.Drawing.Color.Gray)); 
+            JsonMat.color = _Utilities.hexColor(Col);
+            JsonMat.ambient = _Utilities.hexColor(Col);
+            JsonMat.emissive = _Utilities.hexColor(new GH_Colour(System.Drawing.Color.Black));
+            JsonMat.specular = _Utilities.hexColor(new GH_Colour(System.Drawing.Color.Gray)); 
             JsonMat.shininess = 50;
             JsonMat.opacity = Opp;
             JsonMat.transparent = false;
             JsonMat.wireframe = false;
             JsonMat.side = 2;
             return JsonConvert.SerializeObject(JsonMat);
-        }
-
-        //thanks platypus!
-        public string hexColor(GH_Colour ghColor)
-        {
-            string hexStr = "0x" + ghColor.Value.R.ToString("X2") +
-                ghColor.Value.G.ToString("X2") +
-                ghColor.Value.B.ToString("X2");
-            //dynamic hex = new ExpandoObject();
-
-            return hexStr;
         }
     }
 }
