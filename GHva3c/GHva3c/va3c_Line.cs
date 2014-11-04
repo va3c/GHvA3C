@@ -77,12 +77,12 @@ namespace GHva3c
 
             //populate data object properties
             jason.data.vertices = new object[6];
-            jason.data.vertices[0] = line.FromX * -1.0;
-            jason.data.vertices[1] = line.FromZ;
-            jason.data.vertices[2] = line.FromY;
-            jason.data.vertices[3] = line.ToX * -1.0;
-            jason.data.vertices[4] = line.ToZ;
-            jason.data.vertices[5] = line.ToY;
+            jason.data.vertices[0] = Math.Round( line.FromX * -1.0 , 5);
+            jason.data.vertices[1] = Math.Round(line.FromZ, 5);
+            jason.data.vertices[2] = Math.Round(line.FromY, 5);
+            jason.data.vertices[3] = Math.Round(line.ToX * -1.0, 5);
+            jason.data.vertices[4] = Math.Round(line.ToZ, 5);
+            jason.data.vertices[5] = Math.Round(line.ToY, 5);
             jason.data.normals = new object[0];
             jason.data.uvs = new object[0];
             jason.data.faces = new object[0];
