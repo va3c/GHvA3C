@@ -116,47 +116,52 @@ namespace GHva3c
                         select q;
             jason.materials = new object[mesh.Faces.Count + quads.Count()];
 
-            //since some faces might share a material, we'll keep a local dict of materials to avoid duplicates
-            //key = hex color, value = dynamic obect representing a material
-            Dictionary<string, dynamic> faceMaterials = new Dictionary<string, dynamic>();
-
             //we'll loop over the mesh to make sure that each quad is assigned two materials
             //since it is really two triangles as a three.js mesh .  If there are fewer colors than mesh faces, we'll take the last one
             int faceCounter = 0;
             int matCounter = 0;
             foreach (var f in mesh.Faces)
             {
-                //get a string representation of the color
+                //make sure there is an item at this index.  if not, grab the last one
                 if (matCounter == mesh.Faces.Count)
                 {
                     matCounter = mesh.Faces.Count = 1;
-                }
-                string myColorStr = _Utilities.hexColor(colors[matCounter]);
-
-                //check to see if we need to create a new material
-                if (!faceMaterials.ContainsKey(myColorStr))
-                {
-                    //add a new material to the dict
-                    dynamic matthew = new ExpandoObject();
-                    matthew.uuid = Guid.NewGuid();
-                    matthew.type = "MeshBasicMaterial";
-                    matthew.color = myColorStr;
-                    faceMaterials.Add(myColorStr, matthew);
                 }
 
                 //add the color[s] to the array.  one for a tri, two for a quad
                 if (f.IsTriangle)
                 {
-                    jason.materials[faceCounter] = faceMaterials[myColorStr];
+                    //set up our basic material
+                    dynamic matthew = new ExpandoObject();
+                    matthew.uuid = Guid.NewGuid();
+                    matthew.type = "MeshBasicMaterial";
+                    matthew.color = _Utilities.hexColor(colors[matCounter]);
+                    matthew.side = 2;
+
+                    jason.materials[faceCounter] = matthew;
                     faceCounter++;
                 }
                 if (f.IsQuad)
                 {
-                    jason.materials[faceCounter] = faceMaterials[myColorStr];
+                    //set up our basic material
+                    dynamic matthew = new ExpandoObject();
+                    matthew.uuid = Guid.NewGuid();
+                    matthew.type = "MeshBasicMaterial";
+                    matthew.color = _Utilities.hexColor(colors[matCounter]);
+                    matthew.side = 2;
+                    jason.materials[faceCounter] = matthew;
                     faceCounter++;
-                    jason.materials[faceCounter] = faceMaterials[myColorStr];
+
+                    dynamic ana = new ExpandoObject();
+                    ana.uuid = Guid.NewGuid();
+                    ana.type = "MeshBasicMaterial";
+                    ana.color = _Utilities.hexColor(colors[matCounter]);
+                    ana.side = 2;
+                    ana.uuid = Guid.NewGuid();
+                    jason.materials[faceCounter] = ana;
                     faceCounter++;
-                }
+                } 
+
                 matCounter++;
             }
 
