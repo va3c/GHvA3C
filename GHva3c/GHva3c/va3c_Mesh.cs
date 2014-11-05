@@ -103,10 +103,16 @@ namespace GHva3c
             jason.userData = new ExpandoObject();
 
             //populate data object properties
+
+            //fisrt, figure out how many faces we need based on the tri/quad count
+            var quads = from q in mesh.Faces
+                        where q.IsQuad
+                        select q;
+
             jason.data.vertices = new object[mesh.Vertices.Count * 3];
+            jason.data.faces = new object[(mesh.Faces.Count + quads.Count()) * 4];
             jason.data.normals = new object[0];
             jason.data.uvs = new object[0];
-            jason.data.faces = new object[mesh.Faces.Count * 4];
             jason.data.scale = 1;
             jason.data.visible = true;
             jason.data.castShadow = true;
@@ -129,11 +135,26 @@ namespace GHva3c
             i = 0;
             foreach (var f in mesh.Faces)
             {
-                jason.data.faces[counter++] = 0;
-                jason.data.faces[counter++] = mesh.Faces[i].A;
-                jason.data.faces[counter++] = mesh.Faces[i].B;
-                jason.data.faces[counter++] = mesh.Faces[i].C;
-                i++;
+                if (f.IsTriangle)
+                {
+                    jason.data.faces[counter++] = 0;
+                    jason.data.faces[counter++] = mesh.Faces[i].A;
+                    jason.data.faces[counter++] = mesh.Faces[i].B;
+                    jason.data.faces[counter++] = mesh.Faces[i].C;
+                    i++; 
+                }
+                if (f.IsQuad)
+                {
+                    jason.data.faces[counter++] = 0;
+                    jason.data.faces[counter++] = mesh.Faces[i].A;
+                    jason.data.faces[counter++] = mesh.Faces[i].B;
+                    jason.data.faces[counter++] = mesh.Faces[i].C;
+                    jason.data.faces[counter++] = 0;
+                    jason.data.faces[counter++] = mesh.Faces[i].C;
+                    jason.data.faces[counter++] = mesh.Faces[i].D;
+                    jason.data.faces[counter++] = mesh.Faces[i].A;
+                    i++; 
+                }
             }
 
 
