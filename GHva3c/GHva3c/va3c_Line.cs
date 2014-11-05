@@ -39,7 +39,7 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddTextParameter("Line JSON", "Li", "Line JSON output to feed into the scene compiler component", GH_ParamAccess.item);
+            pManager.AddTextParameter("Line JSON", "Lj", "Line JSON output to feed into the scene compiler component", GH_ParamAccess.item);
         }
 
         /// <summary>

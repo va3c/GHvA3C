@@ -36,9 +36,9 @@ namespace GHva3c
         {
             pManager.AddBooleanParameter("write?", "W?", "Write the va3c JSON file to disk?", GH_ParamAccess.item);
             pManager.AddTextParameter("filePath", "Fp", "Full filepath of the file you'd like to create.  Files will be overwritten automatically.", GH_ParamAccess.item);
-            pManager.AddTextParameter("Meshes", "M", "va3c mesh JSON objects to add to the scene.", GH_ParamAccess.list);
+            pManager.AddTextParameter("Meshes", "Mj", "va3c mesh JSON objects to add to the scene.", GH_ParamAccess.list);
             pManager.AddTextParameter("Mesh Materials", "Mm", "va3c mesh materials to add to the scene.  Input one material per mesh.  If list lengths do not match we'll apply the last material to all subsequent meshses.", GH_ParamAccess.list);
-            pManager.AddTextParameter("Lines", "L", "va3c line JSON objects to add to the scene.", GH_ParamAccess.list);
+            pManager.AddTextParameter("Lines", "Lj", "va3c line JSON objects to add to the scene.", GH_ParamAccess.list);
             pManager.AddTextParameter("Line Materials", "Lm", "va3c line materials to add to the scene.  Input one material per line.  If list lengths do not match we'll apply the last material to all subsequent lines.", GH_ParamAccess.list);
             pManager[2].Optional = true;
             pManager[3].Optional = true;

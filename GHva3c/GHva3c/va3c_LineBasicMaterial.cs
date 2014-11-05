@@ -29,7 +29,7 @@ namespace GHva3c
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddColourParameter("Color", "C", "Material Color", GH_ParamAccess.item);
-            pManager.AddNumberParameter("LineWeight", "LW", "The thickness, in pixels, of the line material", GH_ParamAccess.item, 1.0);
+            pManager.AddNumberParameter("LineWeight", "LW", "The thickness, in pixels, of the line material.  Not supported yet.", GH_ParamAccess.item, 1.0);
             pManager[1].Optional = true;
         }
 
@@ -38,7 +38,7 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddTextParameter("Material", "Mat", "Line Material", GH_ParamAccess.item);
+            pManager.AddTextParameter("Line Material", "Lm", "Line Material JSON representation.  Feed this into the scene compiler component.", GH_ParamAccess.item);
         }
 
         /// <summary>
