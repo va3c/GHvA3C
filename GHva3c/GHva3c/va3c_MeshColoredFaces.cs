@@ -1,8 +1,16 @@
 ﻿using System;
+using System.Dynamic;
 using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
+using System.Timers;
 
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
+using GHva3c.Properties;
+
+using Newtonsoft.Json;
 
 namespace GHva3c
 {
@@ -12,7 +20,7 @@ namespace GHva3c
         /// Initializes a new instance of the va3c_coloredMesh class.
         /// </summary>
         public va3c_MeshColoredFaces()
-            : base("va3c_coloredMesh", "va3c_coloredMesh",
+            : base("va3c_MeshColoredFaces", "va3c_MeshColoredFaces",
                 "Creates a va3c mesh and a set of materials from a grasshopper mesh and a list of colors - one color per face.  If the colors list isn't the same length as the list of faces, we'll do standard grasshopper longest list iteration, using the mesh faces as the driving list.",
                 "va3c", "geometry")
         {
@@ -36,8 +44,8 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddTextParameter("Mesh JSON", "Me", "Mesh JSON output to feed into scene compiler component", GH_ParamAccess.item);
-            pManager.AddTextParameter("Material", "Mat", "Geometry Material", GH_ParamAccess.list);
+            pManager.AddTextParameter("Mesh JSON", "Mj", "Mesh JSON output to feed into scene compiler component", GH_ParamAccess.item);
+            pManager.AddTextParameter("Mesh Material JSON", "Mm", "Mesh Material JSON output to feed into scene compiler component.  Make sure to amtch this material with the corresponding mesh from Mj above.", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -46,8 +54,113 @@ namespace GHva3c
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            DA.SetData(0, "BUILD ME!");
-            DA.SetData(1, "BUILD ME!");
+            //local varaibles
+            GH_Mesh mesh = null;
+            List<GH_Colour> colors = new List<GH_Colour>();
+            List<GH_String> attributeNames = new List<GH_String>();
+            List<GH_String> attributeValues = new List<GH_String>();
+            Dictionary<string, object> attributesDict = new Dictionary<string, object>();
+
+            //catch inputs and populate local variables
+            if (!DA.GetData(0, ref mesh))
+            {
+                return;
+            }
+            if (mesh == null)
+            {
+                return;
+            }
+            if (!DA.GetDataList(1, colors))
+            {
+                return;
+            }
+            DA.GetDataList(2, attributeNames);
+            DA.GetDataList(3, attributeValues);
+            if (attributeValues.Count != attributeNames.Count)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Please provide equal numbers of attribute names and values.");
+                return;
+            }
+
+            //populate dictionary
+            int i = 0;
+            foreach (var a in attributeNames)
+            {
+                attributesDict.Add(a.Value, attributeValues[i].Value);
+                i++;
+            }
+
+            //create json from mesh
+            string meshJSON = _Utilities.geoJSON(mesh.Value, attributesDict);
+            //create MeshFaceMaterial
+            string meshMaterailJSON = makeMeshFaceMaterialJSON(mesh.Value, colors);
+
+            DA.SetData(0, meshJSON);
+            DA.SetData(1, meshMaterailJSON);
+        }
+
+        private string makeMeshFaceMaterialJSON(Mesh mesh, List<GH_Colour> colors)
+        {
+            //JSON object to populate
+            dynamic jason = new ExpandoObject();
+            jason.uuid = Guid.NewGuid();
+            jason.type = "MeshFaceMaterial"; 
+            //jason.side = 2;
+            //jason.transparent = false;
+            //jason.wireframe = false;
+            //jason.color = _Utilities.hexColor(new GH_Colour(System.Drawing.Color.White));
+
+            //now we need an array of materials, one for each face of the mesh.
+            var quads = from q in mesh.Faces
+                        where q.IsQuad
+                        select q;
+            jason.materials = new object[mesh.Faces.Count + quads.Count()];
+
+            //since some faces might share a material, we'll keep a local dict of materials to avoid duplicates
+            //key = hex color, value = dynamic obect representing a material
+            Dictionary<string, dynamic> faceMaterials = new Dictionary<string, dynamic>();
+
+            //we'll loop over the mesh to make sure that each quad is assigned two materials
+            //since it is really two triangles as a three.js mesh .  If there are fewer colors than mesh faces, we'll take the last one
+            int faceCounter = 0;
+            int matCounter = 0;
+            foreach (var f in mesh.Faces)
+            {
+                //get a string representation of the color
+                if (matCounter == mesh.Faces.Count)
+                {
+                    matCounter = mesh.Faces.Count = 1;
+                }
+                string myColorStr = _Utilities.hexColor(colors[matCounter]);
+
+                //check to see if we need to create a new material
+                if (!faceMaterials.ContainsKey(myColorStr))
+                {
+                    //add a new material to the dict
+                    dynamic matthew = new ExpandoObject();
+                    matthew.uuid = Guid.NewGuid();
+                    matthew.type = "MeshBasicMaterial";
+                    matthew.color = myColorStr;
+                    faceMaterials.Add(myColorStr, matthew);
+                }
+
+                //add the color[s] to the array.  one for a tri, two for a quad
+                if (f.IsTriangle)
+                {
+                    jason.materials[faceCounter] = faceMaterials[myColorStr];
+                    faceCounter++;
+                }
+                if (f.IsQuad)
+                {
+                    jason.materials[faceCounter] = faceMaterials[myColorStr];
+                    faceCounter++;
+                    jason.materials[faceCounter] = faceMaterials[myColorStr];
+                    faceCounter++;
+                }
+                matCounter++;
+            }
+
+            return JsonConvert.SerializeObject(jason);
         }
 
         /// <summary>

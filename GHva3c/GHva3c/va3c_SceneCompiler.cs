@@ -232,19 +232,28 @@ namespace GHva3c
                     matCounter = meshMaterialList.Count - 1;
                 }
 
-                //deserialize everything
+                //deserialize the geometry and attributes, and add them to our object
                 va3cGeometryCatcher c = JsonConvert.DeserializeObject<va3cGeometryCatcher>(m.Value);
                 va3cAttributesCatcher ac = JsonConvert.DeserializeObject<va3cAttributesCatcher>(m.Value);
-                va3cMaterialCatcher mc = JsonConvert.DeserializeObject<va3cMaterialCatcher>(meshMaterialList[matCounter].Value);
-
                 jason.geometries[meshCounter] = c;
-                jason.materials[matCounter] = mc;
-
-                //pull out an object from JSON and add to a local dict
-
-                MeshDict.Add(c.uuid, mc.uuid);
                 attrDict.Add(c.uuid, ac);
 
+                //now that we have different types of materials, we need to know which catcher to call
+                //use the va3cBaseMaterialCatcher class to determine a material's type, then call the appropriate catcher
+                //object mc;
+                va3cBaseMaterialCatcher baseCatcher = JsonConvert.DeserializeObject<va3cBaseMaterialCatcher>(meshMaterialList[matCounter].Value);
+                if (baseCatcher.type == "MeshFaceMaterial")
+                {
+                    va3cMeshFaceMaterialCatcher mc = JsonConvert.DeserializeObject<va3cMeshFaceMaterialCatcher>(meshMaterialList[matCounter].Value);
+                    jason.materials[matCounter] = mc;
+                    MeshDict.Add(c.uuid, mc.uuid);
+                }
+                if (baseCatcher.type == "MeshPhongMaterial")
+                {
+                    va3cMaterialCatcher mc = JsonConvert.DeserializeObject<va3cMaterialCatcher>(meshMaterialList[matCounter].Value);
+                    jason.materials[matCounter] = mc;
+                    MeshDict.Add(c.uuid, mc.uuid);
+                }
                 matCounter++;
                 meshCounter++;
 

@@ -84,89 +84,10 @@ namespace GHva3c
             }
 
             //create json from mesh
-            string outJSON = geoJSON(mesh.Value, attributesDict);
+            string outJSON = _Utilities.geoJSON(mesh.Value, attributesDict);
 
             DA.SetData(0, outJSON);
             
-        }
-
-
-        private string geoJSON(Mesh mesh, Dictionary<string, object> attDict)
-        {
-            //create a dynamic object to populate
-            dynamic jason = new ExpandoObject();
-
-
-            jason.uuid = Guid.NewGuid();
-            jason.type = "Geometry";
-            jason.data = new ExpandoObject();
-            jason.userData = new ExpandoObject();
-
-            //populate data object properties
-
-            //fisrt, figure out how many faces we need based on the tri/quad count
-            var quads = from q in mesh.Faces
-                        where q.IsQuad
-                        select q;
-
-            jason.data.vertices = new object[mesh.Vertices.Count * 3];
-            jason.data.faces = new object[(mesh.Faces.Count + quads.Count()) * 4];
-            jason.data.normals = new object[0];
-            jason.data.uvs = new object[0];
-            jason.data.scale = 1;
-            jason.data.visible = true;
-            jason.data.castShadow = true;
-            jason.data.receiveShadow = false;
-            jason.data.doubleSided = true;
-
-            //populate vertices
-            int counter = 0;
-            int i = 0;
-            foreach (var v in mesh.Vertices)
-            {
-                jason.data.vertices[counter++] = Math.Round( mesh.Vertices[i].X * -1.0, 5 );
-                jason.data.vertices[counter++] = Math.Round( mesh.Vertices[i].Z, 5 );
-                jason.data.vertices[counter++] = Math.Round( mesh.Vertices[i].Y ,5 );
-                i++;
-            }
-
-            //populate faces
-            counter = 0;
-            i = 0;
-            foreach (var f in mesh.Faces)
-            {
-                if (f.IsTriangle)
-                {
-                    jason.data.faces[counter++] = 0;
-                    jason.data.faces[counter++] = mesh.Faces[i].A;
-                    jason.data.faces[counter++] = mesh.Faces[i].B;
-                    jason.data.faces[counter++] = mesh.Faces[i].C;
-                    i++; 
-                }
-                if (f.IsQuad)
-                {
-                    jason.data.faces[counter++] = 0;
-                    jason.data.faces[counter++] = mesh.Faces[i].A;
-                    jason.data.faces[counter++] = mesh.Faces[i].B;
-                    jason.data.faces[counter++] = mesh.Faces[i].C;
-                    jason.data.faces[counter++] = 0;
-                    jason.data.faces[counter++] = mesh.Faces[i].C;
-                    jason.data.faces[counter++] = mesh.Faces[i].D;
-                    jason.data.faces[counter++] = mesh.Faces[i].A;
-                    i++; 
-                }
-            }
-
-
-            //populate userData objects
-            var attributeCollection = (ICollection<KeyValuePair<string, object>>)jason.userData;
-            foreach (var kvp in attDict)
-            {
-                attributeCollection.Add(kvp);
-            }
-
-
-            return JsonConvert.SerializeObject(jason);
         }
 
         /// <summary>
