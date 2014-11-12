@@ -105,6 +105,18 @@ namespace GHva3c
                 }
             }
 
+            //populate vertex colors
+            if (mesh.VertexColors.Count != 0)
+            {
+                jason.data.colors = new object[mesh.Vertices.Count];
+                i = 0;
+                foreach (var c in mesh.VertexColors)
+                {
+                    jason.data.colors[i] = _Utilities.hexColor(new GH_Colour(c));
+                    i++;
+                }
+            }
+
 
             //populate userData objects
             var attributeCollection = (ICollection<KeyValuePair<string, object>>)jason.userData;
@@ -162,6 +174,18 @@ namespace GHva3c
         //public int side;
         public object[] materials;
     }
+
+    //mesh lambert materials - for use with vertex colors
+    public class va3cMeshLambertMaterialCatcher
+    {
+        public string uuid;
+        public string type;
+        public string color; 
+        public int side;
+        public int vertexColors;
+
+    }
+
 
     public class va3cAttributesCatcher
     {

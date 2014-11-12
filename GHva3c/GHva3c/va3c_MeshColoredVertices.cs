@@ -1,8 +1,16 @@
 ﻿using System;
+using System.Dynamic;
 using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
+using System.Timers;
 
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
+using GHva3c.Properties;
+
+using Newtonsoft.Json;
 
 namespace GHva3c
 {
@@ -13,7 +21,7 @@ namespace GHva3c
         /// </summary>
         public va3c_MeshColoredVertices()
             : base("va3c_MeshColoredVertices", "va3c_MeshColoredVertices",
-                "Creates a va3c mesh and a list of materials from a grasshopper mesh with color data.",
+                "Creates a va3c mesh and a material from a grasshopper mesh with color data.",
                 "va3c", "geometry")
         {
         }
@@ -35,8 +43,8 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddTextParameter("Mesh JSON", "Me", "Mesh JSON output to feed into scene compiler component", GH_ParamAccess.item);
-            pManager.AddTextParameter("Materials", "Mat", "Geometry Material", GH_ParamAccess.list);
+            pManager.AddTextParameter("Mesh JSON", "Mj", "Mesh JSON output to feed into scene compiler component", GH_ParamAccess.item);
+            pManager.AddTextParameter("Mesh Material", "Mm", "Mesh Material JSON output to feed into scene compiler component.  Make sure to amtch this material with the corresponding mesh from Mj above.", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -45,8 +53,55 @@ namespace GHva3c
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            DA.SetData(0, "BUILD ME!");
-            DA.SetData(1, "BUILD ME!");
+            //local varaibles
+            GH_Mesh mesh = null;
+            List<GH_String> attributeNames = new List<GH_String>();
+            List<GH_String> attributeValues = new List<GH_String>();
+            Dictionary<string, object> attributesDict = new Dictionary<string, object>();
+
+            //catch inputs and populate local variables
+            if (!DA.GetData(0, ref mesh))
+            {
+                return;
+            }
+            if (mesh == null)
+            {
+                return;
+            }
+            DA.GetDataList(1, attributeNames);
+            DA.GetDataList(2, attributeValues);
+            if (attributeValues.Count != attributeNames.Count)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Please provide equal numbers of attribute names and values.");
+                return;
+            }
+
+            //populate dictionary
+            int i = 0;
+            foreach (var a in attributeNames)
+            {
+                attributesDict.Add(a.Value, attributeValues[i].Value);
+                i++;
+            }
+
+
+            //create json from mesh
+            string outJSON = _Utilities.geoJSON(mesh.Value, attributesDict);
+
+            DA.SetData(0, outJSON);
+            DA.SetData(1, MaterialWithVertexColors());
+        }
+
+        public string MaterialWithVertexColors()
+        {
+            dynamic JsonMat = new ExpandoObject();
+
+            JsonMat.uuid = Guid.NewGuid();
+            JsonMat.type = "MeshLambertMaterial";
+            JsonMat.color = _Utilities.hexColor(new GH_Colour(System.Drawing.Color.White));
+            JsonMat.side = 2;
+            JsonMat.vertexColors = 1;
+            return JsonConvert.SerializeObject(JsonMat);
         }
 
         /// <summary>
