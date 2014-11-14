@@ -90,36 +90,36 @@ namespace GHva3c
                 i++;
             }
 
+            //create MeshFaceMaterial and assign mesh face material indexes in the attributes dict
+            string meshMaterailJSON = makeMeshFaceMaterialJSON(mesh.Value, attributesDict, colors);
+
             //create json from mesh
             string meshJSON = _Utilities.geoJSON(mesh.Value, attributesDict);
-            //create MeshFaceMaterial
-            string meshMaterailJSON = makeMeshFaceMaterialJSON(mesh.Value, colors);
+            
 
             DA.SetData(0, meshJSON);
             DA.SetData(1, meshMaterailJSON);
         }
 
-        private string makeMeshFaceMaterialJSON(Mesh mesh, List<GH_Colour> colors)
+        private string makeMeshFaceMaterialJSON(Mesh mesh, Dictionary<string, object> attributesDict, List<GH_Colour> colors)
         {
             //JSON object to populate
             dynamic jason = new ExpandoObject();
             jason.uuid = Guid.NewGuid();
             jason.type = "MeshFaceMaterial"; 
-            //jason.side = 2;
-            //jason.transparent = false;
-            //jason.wireframe = false;
-            //jason.color = _Utilities.hexColor(new GH_Colour(System.Drawing.Color.White));
 
-            //now we need an array of materials, one for each face of the mesh.
-            var quads = from q in mesh.Faces
-                        where q.IsQuad
-                        select q;
-            jason.materials = new object[mesh.Faces.Count + quads.Count()];
+            //we need an list of material indexes, one for each face of the mesh.  This will be stroed as a CSV string in the attributes dict
+            //and on the viewer side we'll use this to set each mesh face's material index property
+            List<int> myMaterialIndexes = new List<int>();
 
-            //we'll loop over the mesh to make sure that each quad is assigned two materials
-            //since it is really two triangles as a three.js mesh .  If there are fewer colors than mesh faces, we'll take the last one
-            int faceCounter = 0;
+            //since some faces might share a material, we'll keep a local dict of materials to avoid duplicates
+            //key = hex color, value = int representing a material index
+            Dictionary<string, int> faceMaterials = new Dictionary<string, int>();
+
+            //we'll loop over the mesh to make sure that each quad is assigned two material indexes
+            //since it is really two triangles as a three.js mesh.  If there are fewer colors than mesh faces, we'll take the last material
             int matCounter = 0;
+            int uniqueColorCounter = 0;
             foreach (var f in mesh.Faces)
             {
                 //make sure there is an item at this index.  if not, grab the last one
@@ -128,44 +128,56 @@ namespace GHva3c
                     matCounter = mesh.Faces.Count = 1;
                 }
 
+                //get a string representation of the color
+                string myColorStr = _Utilities.hexColor(colors[matCounter]);
+
+                //check to see if we need to create a new material index
+                if (!faceMaterials.ContainsKey(myColorStr))
+                {
+                    //add the color/index pair to our dictionary and increment the unique color counter
+                    faceMaterials.Add(myColorStr, uniqueColorCounter);
+                    uniqueColorCounter++;
+                }
+
                 //add the color[s] to the array.  one for a tri, two for a quad
                 if (f.IsTriangle)
                 {
-                    //set up our basic material
-                    dynamic matthew = new ExpandoObject();
-                    matthew.uuid = Guid.NewGuid();
-                    matthew.type = "MeshBasicMaterial";
-                    matthew.color = _Utilities.hexColor(colors[matCounter]);
-                    matthew.side = 2;
-
-                    jason.materials[faceCounter] = matthew;
-                    faceCounter++;
+                    myMaterialIndexes.Add(faceMaterials[myColorStr]);
                 }
                 if (f.IsQuad)
                 {
-                    //set up our basic material
-                    dynamic matthew = new ExpandoObject();
-                    matthew.uuid = Guid.NewGuid();
-                    matthew.type = "MeshBasicMaterial";
-                    matthew.color = _Utilities.hexColor(colors[matCounter]);
-                    matthew.side = 2;
-                    jason.materials[faceCounter] = matthew;
-                    faceCounter++;
-
-                    dynamic ana = new ExpandoObject();
-                    ana.uuid = Guid.NewGuid();
-                    ana.type = "MeshBasicMaterial";
-                    ana.color = _Utilities.hexColor(colors[matCounter]);
-                    ana.side = 2;
-                    ana.uuid = Guid.NewGuid();
-                    jason.materials[faceCounter] = ana;
-                    faceCounter++;
+                    myMaterialIndexes.Add(faceMaterials[myColorStr]);
+                    myMaterialIndexes.Add(faceMaterials[myColorStr]);
                 } 
-
                 matCounter++;
             }
 
+            //now that we know how many unique materials we need, we'll create a materials array on jason, and add them all to it
+            jason.materials = new object[faceMaterials.Count];
+            for (int i = 0; i < faceMaterials.Count; i++)
+            {
+                dynamic matthew = new ExpandoObject();
+                matthew.uuid = Guid.NewGuid();
+                matthew.type = "MeshBasicMaterial";
+                matthew.side = 2;
+                matthew.color = faceMaterials.Keys.ToList()[i];
+                jason.materials[i] = matthew;
+            }
+
+            //finally, we need to add a csv string of the materials to our attribute dictionary
+            attributesDict.Add("VA3C_FaceColorIndexes", createCsvString(myMaterialIndexes));
             return JsonConvert.SerializeObject(jason);
+        }
+
+        //method to create a csv string out of a list of integers
+        private object createCsvString(List<int> myMaterialIndexes)
+        {
+            string csv = "";
+            foreach (var i in myMaterialIndexes)
+            {
+                csv = csv + i.ToString() + ",";
+            }
+            return csv;
         }
 
         /// <summary>
