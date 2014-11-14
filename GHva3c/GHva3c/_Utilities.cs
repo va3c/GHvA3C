@@ -163,6 +163,17 @@ namespace GHva3c
         public int side;
     }
 
+    //mesh basic materials
+    public class va3cMeshBasicMaterialCatcher
+    {
+        public string uuid;
+        public string type;
+        public string color;
+        public int side;
+        public double opacity;
+        public bool transparent;
+    }
+
     //mesh basic materials with face colors
     public class va3cMeshFaceMaterialCatcher
     {

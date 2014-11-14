@@ -260,6 +260,12 @@ namespace GHva3c
                     jason.materials[matCounter] = mc;
                     MeshDict.Add(c.uuid, mc.uuid);
                 }
+                if (baseCatcher.type == "MeshBasicMaterial")
+                {
+                    va3cMeshBasicMaterialCatcher mc = JsonConvert.DeserializeObject<va3cMeshBasicMaterialCatcher>(meshMaterialList[matCounter].Value);
+                    jason.materials[matCounter] = mc;
+                    MeshDict.Add(c.uuid, mc.uuid);
+                }
                 matCounter++;
                 meshCounter++;
 

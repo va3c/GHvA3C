@@ -77,6 +77,7 @@
     </Compile>
     <Compile Include="va3c_Line.cs" />
     <Compile Include="va3c_LineBasicMaterial.cs" />
+    <Compile Include="va3c_MeshBasicMaterial.cs" />
     <Compile Include="va3c_MeshColoredFaces.cs" />
     <Compile Include="va3c_Mesh.cs" />
     <Compile Include="va3c_Material.cs" />
