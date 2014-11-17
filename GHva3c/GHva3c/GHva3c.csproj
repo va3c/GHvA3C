@@ -59,7 +59,7 @@
       <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="RhinoCommon">
-      <HintPath>..\..\..\..\..\..\..\Program Files\McNeel\Rhinoceros 5.0\System\RhinoCommon.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files\Rhinoceros 5.0 (64-bit)\System\RhinoCommon.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -80,11 +80,12 @@
     <Compile Include="va3c_MeshBasicMaterial.cs" />
     <Compile Include="va3c_MeshColoredFaces.cs" />
     <Compile Include="va3c_Mesh.cs" />
-    <Compile Include="va3c_Material.cs" />
+    <Compile Include="ARCHIVE\va3c_Material_ARCHIVE_20141116.cs" />
     <Compile Include="va3c_MeshColoredVertices.cs" />
     <Compile Include="ComponentArchive\va3c_Scene_ARCHIVE_20141104.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="va3c_MeshPhongMaterial.cs" />
     <Compile Include="va3c_SceneCompiler.cs" />
     <Compile Include="_Utilities.cs" />
   </ItemGroup>
