@@ -250,7 +250,7 @@ namespace GHva3c
                 }
                 if (baseCatcher.type == "MeshPhongMaterial")
                 {
-                    va3cMaterialCatcher mc = JsonConvert.DeserializeObject<va3cMaterialCatcher>(meshMaterialList[matCounter].Value);
+                    va3cMeshPhongMaterialCatcher mc = JsonConvert.DeserializeObject<va3cMeshPhongMaterialCatcher>(meshMaterialList[matCounter].Value);
                     jason.materials[matCounter] = mc;
                     MeshDict.Add(c.uuid, mc.uuid);
                 }

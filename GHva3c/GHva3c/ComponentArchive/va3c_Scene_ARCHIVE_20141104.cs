@@ -189,7 +189,7 @@ namespace GHva3c
                 //deserialize everything
                 va3cGeometryCatcher c = JsonConvert.DeserializeObject<va3cGeometryCatcher>(m.Value);
                 va3cAttributesCatcher ac = JsonConvert.DeserializeObject<va3cAttributesCatcher>(m.Value);
-                va3cMaterialCatcher mc = JsonConvert.DeserializeObject<va3cMaterialCatcher>(materialList[matCounter].Value);
+                va3cMeshPhongMaterialCatcher mc = JsonConvert.DeserializeObject<va3cMeshPhongMaterialCatcher>(materialList[matCounter].Value);
 
                 jason.geometries[meshCounter] = c;
                 jason.materials[matCounter] = mc;

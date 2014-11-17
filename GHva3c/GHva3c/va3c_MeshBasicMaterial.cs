@@ -31,8 +31,8 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddColourParameter("Color", "C", "Material Color", GH_ParamAccess.item);
-            pManager.AddNumberParameter("[Opacity]", "[O]", "Material Opacity - should be between 0 and 1", GH_ParamAccess.item, 1.0);
+            pManager.AddColourParameter("Color", "C", "Diffuse color of the material", GH_ParamAccess.item);
+            pManager.AddNumberParameter("[Opacity]", "[O]", "Number in the range of 0.0 - 1.0 indicating how transparent the material is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.", GH_ParamAccess.item, 1.0);
             pManager[1].Optional = true;
         }
 
@@ -75,7 +75,7 @@ namespace GHva3c
             jason.type = "MeshBasicMaterial";
             jason.color = _Utilities.hexColor(inColor);
             jason.side = 2;
-            if (inOpacity > 0)
+            if (inOpacity < 1)
             {
                 jason.transparent = true;
                 jason.opacity = inOpacity;

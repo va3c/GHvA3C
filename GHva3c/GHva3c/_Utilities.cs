@@ -147,8 +147,8 @@ namespace GHva3c
         public string type;
     }
 
-    //mesh phoung materials - update name
-    public class va3cMaterialCatcher
+    //mesh phong materials
+    public class va3cMeshPhongMaterialCatcher
     {
         public string uuid;
         public string type;
