@@ -93,7 +93,8 @@ namespace GHva3c
                 //You can add image files to your project resources and access them like this:
 
                 //return  Resources.MatIcon;
-                return Resources.va3c_yellow;
+                //return Resources.va3c_yellow;
+                return null;
             }
         }
 

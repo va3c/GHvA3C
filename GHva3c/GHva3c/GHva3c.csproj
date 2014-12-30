@@ -82,7 +82,7 @@
     <Compile Include="va3c_Mesh.cs" />
     <Compile Include="ARCHIVE\va3c_Material_ARCHIVE_20141116.cs" />
     <Compile Include="va3c_MeshColoredVertices.cs" />
-    <Compile Include="ComponentArchive\va3c_Scene_ARCHIVE_20141104.cs">
+    <Compile Include="ARCHIVE\va3c_Scene_ARCHIVE_20141104.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="va3c_MeshPhongMaterial.cs" />
@@ -98,9 +98,29 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <None Include="Resources\MatIcon.png" />
+    <None Include="Resources\LINE_MAT.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MESH.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MESH_VERTICES.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MESH_FACES.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MESH_BASIC.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MESH_PHONG.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LINE.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\3.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

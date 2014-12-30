@@ -63,9 +63,9 @@ namespace GHva3c.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap MatIcon {
+        internal static System.Drawing.Bitmap _3 {
             get {
-                object obj = ResourceManager.GetObject("MatIcon", resourceCulture);
+                object obj = ResourceManager.GetObject("_3", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace GHva3c.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap va3c_cyan {
+        internal static System.Drawing.Bitmap LINE {
             get {
-                object obj = ResourceManager.GetObject("va3c_cyan", resourceCulture);
+                object obj = ResourceManager.GetObject("LINE", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,9 +83,9 @@ namespace GHva3c.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap va3c_magenta {
+        internal static System.Drawing.Bitmap LINE_MAT {
             get {
-                object obj = ResourceManager.GetObject("va3c_magenta", resourceCulture);
+                object obj = ResourceManager.GetObject("LINE_MAT", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +93,49 @@ namespace GHva3c.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap va3c_yellow {
+        internal static System.Drawing.Bitmap MESH {
             get {
-                object obj = ResourceManager.GetObject("va3c_yellow", resourceCulture);
+                object obj = ResourceManager.GetObject("MESH", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap MESH_BASIC {
+            get {
+                object obj = ResourceManager.GetObject("MESH_BASIC", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap MESH_FACES {
+            get {
+                object obj = ResourceManager.GetObject("MESH_FACES", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap MESH_PHONG {
+            get {
+                object obj = ResourceManager.GetObject("MESH_PHONG", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap MESH_VERTICES {
+            get {
+                object obj = ResourceManager.GetObject("MESH_VERTICES", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -26,6 +26,14 @@ namespace GHva3c
         {
         }
 
+        public override GH_Exposure Exposure
+        {
+            get
+            {
+                return GH_Exposure.secondary;
+            }
+        }
+
         /// <summary>
         /// Registers all the input parameters for this component.
         /// </summary>
@@ -99,7 +107,7 @@ namespace GHva3c
             {
                 //You can add image files to your project resources and access them like this:
                 // return Resources.IconForThisComponent;
-                return Resources.va3c_cyan;
+                return Resources.MESH;
             }
         }
 
