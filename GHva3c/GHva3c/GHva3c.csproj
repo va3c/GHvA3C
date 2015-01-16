@@ -85,6 +85,7 @@
     <Compile Include="ARCHIVE\va3c_Scene_ARCHIVE_20141104.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="va3c_MeshLambertMaterial.cs" />
     <Compile Include="va3c_MeshPhongMaterial.cs" />
     <Compile Include="va3c_SceneCompiler.cs" />
     <Compile Include="_Utilities.cs" />
