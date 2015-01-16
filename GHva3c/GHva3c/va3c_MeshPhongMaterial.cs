@@ -17,9 +17,9 @@ namespace GHva3c
         /// Initializes a new instance of the va3c_MeshPhongMaterial class.
         /// </summary>
         public va3c_MeshPhongMaterial()
-            : base("va3c_MeshPhongMaterial", "va3c_MeshPhongMaterial",
+            : base("vA3C_MeshPhongMaterial", "vA3C_MeshPhongMaterial",
                 "Create a fancy material for meshes",
-                "va3c", "materials")
+                "vA3C", "materials")
         {
         }
 

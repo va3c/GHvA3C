@@ -17,9 +17,9 @@ namespace GHva3c
         /// Initializes a new instance of the va3c_LineBasicMaterial class.
         /// </summary>
         public va3c_LineBasicMaterial()
-            : base("va3c_LineBasicMaterial", "va3c_LineBasicMaterial",
+            : base("vA3C_LineBasicMaterial", "vA3C_LineBasicMaterial",
                 "Creates a THREE.js Basic Line Material to use with line geometries",
-                "va3c", "materials")
+                "vA3C", "materials")
         {
         }
 

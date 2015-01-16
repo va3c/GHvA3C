@@ -20,9 +20,9 @@ namespace GHva3c
         /// Initializes a new instance of the va3c_geometry class.
         /// </summary>
         public va3c_Mesh()
-            : base("va3c_Mesh", "va3c_Mesh",
-                "Creates a va3c mesh from a grasshopper mesh.",
-                "va3c", "geometry")
+            : base("vA3C_Mesh", "vA3C_Mesh",
+                "Creates a vA3C mesh from a grasshopper mesh.",
+                "vA3C", "geometry")
         {
         }
 

@@ -23,9 +23,9 @@ namespace GHva3c
         /// Initializes a new instance of the va3c_SceneCompiler class.
         /// </summary>
         public va3c_SceneCompiler()
-            : base("va3c_SceneCompiler", "va3c_SceneCompiler",
-                "Compiles va3c objects into a JSON representation of a THREE.js scene, which can be opened using the va3c viewer.",
-                "va3c", "va3c")
+            : base("vA3C_SceneCompiler", "vA3C_SceneCompiler",
+                "Compiles vA3C objects into a JSON representation of a THREE.js scene, which can be opened using the vA3C viewer.",
+                "vA3C", "vA3C")
         {
         }
 
@@ -38,8 +38,8 @@ namespace GHva3c
             pManager.AddTextParameter("filePath", "Fp", "Full filepath of the file you'd like to create.  Files will be overwritten automatically.", GH_ParamAccess.item);
             pManager.AddTextParameter("Meshes", "Mj", "va3c mesh JSON objects to add to the scene.", GH_ParamAccess.list);
             pManager.AddTextParameter("Mesh Materials", "Mm", "va3c mesh materials to add to the scene.  Input one material per mesh.  If list lengths do not match we'll apply the last material to all subsequent meshses.", GH_ParamAccess.list);
-            pManager.AddTextParameter("Lines", "Lj", "va3c line JSON objects to add to the scene.", GH_ParamAccess.list);
-            pManager.AddTextParameter("Line Materials", "Lm", "va3c line materials to add to the scene.  Input one material per line.  If list lengths do not match we'll apply the last material to all subsequent lines.", GH_ParamAccess.list);
+            pManager.AddTextParameter("Lines", "Lj", "vA3C line JSON objects to add to the scene.", GH_ParamAccess.list);
+            pManager.AddTextParameter("Line Materials", "Lm", "vA3C line materials to add to the scene.  Input one material per line.  If list lengths do not match we'll apply the last material to all subsequent lines.", GH_ParamAccess.list);
             pManager[2].Optional = true;
             pManager[3].Optional = true;
             pManager[4].Optional = true;

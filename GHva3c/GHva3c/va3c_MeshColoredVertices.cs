@@ -20,9 +20,9 @@ namespace GHva3c
         /// Initializes a new instance of the va3c_MeshColoredVertices class.
         /// </summary>
         public va3c_MeshColoredVertices()
-            : base("va3c_MeshColoredVertices", "va3c_MeshColoredVertices",
-                "Creates a va3c mesh and a material from a grasshopper mesh with color data.",
-                "va3c", "geometry")
+            : base("vA3C_MeshColoredVertices", "vA3C_MeshColoredVertices",
+                "Creates a vA3C mesh and a material from a grasshopper mesh with color data.",
+                "vA3C", "geometry")
         {
         }
 

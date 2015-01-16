@@ -20,9 +20,9 @@ namespace GHva3c
         /// Initializes a new instance of the va3c_Line class.
         /// </summary>
         public va3c_Line()
-            : base("va3c_Line", "va3c_Line",
-                "Creates a va3c line",
-                "va3c", "geometry")
+            : base("vA3C_Line", "vA3C_Line",
+                "Creates a vA3C line",
+                "vA3C", "geometry")
         {
         }
 

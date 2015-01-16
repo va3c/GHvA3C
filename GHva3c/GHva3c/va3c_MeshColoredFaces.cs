@@ -20,9 +20,9 @@ namespace GHva3c
         /// Initializes a new instance of the va3c_coloredMesh class.
         /// </summary>
         public va3c_MeshColoredFaces()
-            : base("va3c_MeshColoredFaces", "va3c_MeshColoredFaces",
-                "Creates a va3c mesh and a set of materials from a grasshopper mesh and a list of colors - one color per face.  If the colors list isn't the same length as the list of faces, we'll do standard grasshopper longest list iteration, using the mesh faces as the driving list.",
-                "va3c", "geometry")
+            : base("vA3C_MeshColoredFaces", "vA3C_MeshColoredFaces",
+                "Creates a vA3C mesh and a set of materials from a grasshopper mesh and a list of colors - one color per face.  If the colors list isn't the same length as the list of faces, we'll do standard grasshopper longest list iteration, using the mesh faces as the driving list.",
+                "vA3C", "geometry")
         {
         }
 

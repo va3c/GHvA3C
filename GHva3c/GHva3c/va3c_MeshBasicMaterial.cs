@@ -20,9 +20,9 @@ namespace GHva3c
         /// Initializes a new instance of the va3c_MeshBasicMaterial class.
         /// </summary>
         public va3c_MeshBasicMaterial()
-            : base("va3c_MeshBasicMaterial", "va3c_MeshBasicMaterial",
-                "Creates a basic mesh material",
-                "va3c", "materials")
+            : base("vA3C_MeshBasicMaterial", "vA3C_MeshBasicMaterial",
+                "Creates mesh material that will always be the same color in a THREE.js scene - it will not be effected by lighting.",
+                "vA3C", "materials")
         {
         }
 
