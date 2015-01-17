@@ -123,6 +123,16 @@ namespace GHva3c.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap MESH_LAMBERT {
+            get {
+                object obj = ResourceManager.GetObject("MESH_LAMBERT", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap MESH_PHONG {
             get {
                 object obj = ResourceManager.GetObject("MESH_PHONG", resourceCulture);

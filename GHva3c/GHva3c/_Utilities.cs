@@ -191,9 +191,13 @@ namespace GHva3c
     {
         public string uuid;
         public string type;
-        public string color; 
+        public string color;
+        public string ambient;
+        public string emissive;
         public int side;
-        public int vertexColors;
+        public double opacity;
+        public bool transparent;
+        public int shading;
 
     }
 
