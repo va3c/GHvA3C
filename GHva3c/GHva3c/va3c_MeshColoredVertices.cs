@@ -30,7 +30,8 @@ namespace GHva3c
         {
             get
             {
-                return GH_Exposure.tertiary;
+                return GH_Exposure.hidden;
+                //return GH_Exposure.tertiary;
             }
         }
 
