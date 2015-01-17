@@ -18,7 +18,7 @@ namespace GHva3c
         /// </summary>
         public va3c_MeshPhongMaterial()
             : base("vA3C_MeshPhongMaterial", "vA3C_MeshPhongMaterial",
-                "Create a fancy material for meshes",
+                "Create a shiny material for meshes",
                 "vA3C", "materials")
         {
         }
@@ -37,7 +37,7 @@ namespace GHva3c
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddColourParameter("Color", "C", "Diffuse color of the material", GH_ParamAccess.item);
-            pManager.AddColourParameter("Ambient Color", "[aC]", "Ambient color of the material, multiplied by the color of the ambient light in the scene.  Default is white", GH_ParamAccess.item, System.Drawing.Color.White);
+            pManager.AddColourParameter("Ambient Color", "[aC]", "Ambient color of the material, multiplied by the color of the ambient light in the scene.  Default is black", GH_ParamAccess.item, System.Drawing.Color.Black);
             pManager.AddColourParameter("Emissive Color", "[eC]", "Emissive (light) color of the material, essentially a solid color unaffected by other lighting. Default is black.", GH_ParamAccess.item, System.Drawing.Color.Black);
             pManager.AddColourParameter("Specular Color", "[sC]", "Specular color of the material, i.e., how shiny the material is and the color of its shine. Setting this the same color as the diffuse value (times some intensity) makes the material more metallic-looking; setting this to some gray makes the material look more plastic. Default is dark gray.", GH_ParamAccess.item, System.Drawing.Color.DarkGray);
             pManager.AddNumberParameter("Shininess", "[S]", "How shiny the specular highlight is; a higher value gives a sharper highlight. Default is 30", GH_ParamAccess.item, 30.0);
