@@ -215,7 +215,7 @@ namespace GHva3c
             jason.metadata = new ExpandoObject();
             jason.metadata.version = 4.3;
             jason.metadata.type = "Object";
-            jason.metadata.generator = "ObjectExporter";
+            jason.metadata.generator = "vA3C_Grasshopper_Exporter";
 
             //populate mesh geometries:
             jason.geometries = new object[meshList.Count + linesList.Count];   //array for geometry - both lines and meshes
