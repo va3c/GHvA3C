@@ -54,7 +54,7 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Mesh Material", "Mm", "Mesh Material JSON representation.  Feed this into the Scene Compiler component.", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Mesh Material", "Mm", "Mesh Material.  Feed this into the vA3C Mesh component.", GH_ParamAccess.item);
         }
 
         /// <summary>
