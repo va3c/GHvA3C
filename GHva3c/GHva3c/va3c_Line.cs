@@ -40,6 +40,8 @@ namespace GHva3c
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddLineParameter("Line", "L", "A line to convert into a va3c JSON representation of the line", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Line Material", "Lm", "Line Material", GH_ParamAccess.item);
+
         }
 
         /// <summary>
@@ -47,7 +49,7 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddTextParameter("Line JSON", "Lj", "Line JSON output to feed into the scene compiler component", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Line Element", "Le", "Line element output to feed into the scene compiler component", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -58,6 +60,7 @@ namespace GHva3c
         {
             //local variables
             GH_Line line = null;
+            Material material = null;
 
             //catch inputs and populate local variables
             if (!DA.GetData(0, ref line))
@@ -65,11 +68,25 @@ namespace GHva3c
                 return;
             }
 
+            if (!DA.GetData(1, ref material))
+            {
+                return;
+            }
+
+            if (material.Type != mType.Line)
+            {
+                throw new Exception("Please use a LINE Material");
+            }
+            
+
             //create JSON from line
             string outJSON = lineJSON(line.Value);
-            
+
+
+            Element e = new Element(outJSON, eType.Line, material);
+
             //output results
-            DA.SetData(0, outJSON);
+            DA.SetData(0, e);
 
         }
 
