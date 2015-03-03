@@ -46,7 +46,7 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddTextParameter("Line Material", "Lm", "Line Material JSON representation.  Feed this into the scene compiler component.", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Line Material", "Lm", "Line Material.  Feed this into the vA3C Line component.", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -69,8 +69,10 @@ namespace GHva3c
             //spin up a JSON material from the inputs
             string outJSON = ConstructMaterial(inColor, inNumber);
 
+            Material material = new Material(outJSON, mType.Line);
+            
             //output
-            DA.SetData(0, outJSON);
+            DA.SetData(0, material);
             
 
         }
