@@ -71,6 +71,13 @@ namespace GHva3c
             Json = json;
             Type = type;
         }
+
+        public Element(string json, eType type, Material material)
+        {
+            Json = json;
+            Type = type;
+            Material = material;
+        }
     }
 
     public enum eType
