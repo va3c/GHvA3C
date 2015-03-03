@@ -59,7 +59,7 @@
       <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="RhinoCommon">
-      <HintPath>..\..\..\..\..\..\..\Program Files\Rhinoceros 5.0 (64-bit)\System\RhinoCommon.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files\McNeel\Rhinoceros 5.0\System\RhinoCommon.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -68,6 +68,8 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="va3c_Material.cs" />
+    <Compile Include="va3c_Element.cs" />
     <Compile Include="GHva3cInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -75,6 +77,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="va3C_MaterialParameter.cs" />
+    <Compile Include="va3C_ElementParameter.cs" />
     <Compile Include="va3c_Line.cs" />
     <Compile Include="va3c_LineBasicMaterial.cs" />
     <Compile Include="va3c_MeshBasicMaterial.cs" />
@@ -87,6 +91,7 @@
     </Compile>
     <Compile Include="va3c_MeshLambertMaterial.cs" />
     <Compile Include="va3c_MeshPhongMaterial.cs" />
+    <Compile Include="va3c_Views.cs" />
     <Compile Include="va3c_SceneCompiler.cs" />
     <Compile Include="_Utilities.cs" />
   </ItemGroup>
