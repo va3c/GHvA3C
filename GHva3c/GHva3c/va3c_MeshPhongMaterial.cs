@@ -54,7 +54,7 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddTextParameter("Mesh Material", "Mm", "Mesh Material JSON representation.  Feed this into the Scene Compiler component.", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Mesh Material", "Mm", "Mesh Material JSON representation.  Feed this into the Scene Compiler component.", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -88,8 +88,10 @@ namespace GHva3c
 
             outMaterial = ConstructPhongMaterial(inColor, inAmbient, inEmissive, inSpecular, inShininess.Value, inOpacity.Value);
             //call json conversion function
+            
+            Material material = new Material(outMaterial, mType.Mesh);
 
-            DA.SetData(0, outMaterial);
+            DA.SetData(0, material);
         }
 
         private string ConstructPhongMaterial(GH_Colour col, GH_Colour amb, GH_Colour em, GH_Colour spec, Double shin, Double opp)
