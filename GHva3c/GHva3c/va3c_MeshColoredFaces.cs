@@ -52,8 +52,8 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddTextParameter("Mesh JSON", "Mj", "Mesh JSON output to feed into scene compiler component", GH_ParamAccess.item);
-            pManager.AddTextParameter("Mesh Material JSON", "Mm", "Mesh Material JSON output to feed into scene compiler component.  Make sure to amtch this material with the corresponding mesh from Mj above.", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Mesh Element", "Me", "Mesh Element output to feed into scene compiler component", GH_ParamAccess.item);
+            //pManager.AddGenericParameter("Mesh Material", "Mm", "Mesh Material to feed into the va3C Mesh component.  Make sure to amtch this material with the corresponding mesh from Mj above.", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -103,10 +103,12 @@ namespace GHva3c
 
             //create json from mesh
             string meshJSON = _Utilities.geoJSON(mesh.Value, attributesDict);
-            
 
-            DA.SetData(0, meshJSON);
-            DA.SetData(1, meshMaterailJSON);
+            Material material = new Material(meshMaterailJSON, mType.Mesh);
+            Element e = new Element(meshJSON, eType.Mesh, material);
+
+            DA.SetData(0, e);
+           
         }
 
         private string makeMeshFaceMaterialJSON(Mesh mesh, Dictionary<string, object> attributesDict, List<GH_Colour> colors)
