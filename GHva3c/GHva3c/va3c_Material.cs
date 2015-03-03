@@ -39,7 +39,6 @@ namespace GHva3c
 
 
         //PROPERTIES
-        //[DataMember]
         public string ID
         {
             get { return myID; }

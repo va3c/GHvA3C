@@ -40,7 +40,7 @@ namespace GHva3c
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddMeshParameter("Mesh", "M", "A Grasshopper Mesh", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Material", "Mm", "Mesh Material", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Mesh Material", "Mm", "Mesh Material", GH_ParamAccess.item);
             pManager.AddTextParameter("Attribute Names", "[aN]", "Attribute Names", GH_ParamAccess.list);
             pManager[2].Optional = true;
             pManager.AddTextParameter("Attribute Values", "[aV]", "Attribute Values", GH_ParamAccess.list);
@@ -69,7 +69,7 @@ namespace GHva3c
             List<GH_String> attributeNames = new List<GH_String>();
             List<GH_String> attributeValues = new List<GH_String>();
             Dictionary<string, object> attributesDict = new Dictionary<string, object>();
-            Material material = new Material();
+            Material material = null;
 
             //catch inputs and populate local variables
             if (!DA.GetData(0, ref mesh))
@@ -109,18 +109,14 @@ namespace GHva3c
 
             if (material.Type != mType.Mesh)
             {
-                throw new Exception();
+                throw new Exception("Please use a MESH Material");
             }
 
             //create json from mesh
             string outJSON = _Utilities.geoJSON(mesh.Value, attributesDict);
 
-            Element e = new Element();
-            e.Type = eType.Mesh;
-            e.Json = outJSON;
-            e.Material = material;
+            Element e = new Element(outJSON,eType.Mesh, material);
 
-            //DA.SetData(0, outJSON);
             DA.SetData(0, e);
         }
 
