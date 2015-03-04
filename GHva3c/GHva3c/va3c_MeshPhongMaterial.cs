@@ -89,7 +89,7 @@ namespace GHva3c
             outMaterial = ConstructPhongMaterial(inColor, inAmbient, inEmissive, inSpecular, inShininess.Value, inOpacity.Value);
             //call json conversion function
             
-            Material material = new Material(outMaterial, mType.Mesh);
+            Material material = new Material(outMaterial, va3cMaterialType.Mesh);
 
             DA.SetData(0, material);
         }

@@ -104,8 +104,8 @@ namespace GHva3c
             //create json from mesh
             string meshJSON = _Utilities.geoJSON(mesh.Value, attributesDict);
 
-            Material material = new Material(meshMaterailJSON, mType.Mesh);
-            Element e = new Element(meshJSON, eType.Mesh, material);
+            Material material = new Material(meshMaterailJSON, va3cMaterialType.Mesh);
+            Element e = new Element(meshJSON, va3cElementType.Mesh, material);
 
             DA.SetData(0, e);
            

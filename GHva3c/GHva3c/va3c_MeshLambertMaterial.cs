@@ -82,7 +82,7 @@ namespace GHva3c
 
             outMaterial = ConstructLambertMaterial(inColor, inAmbient, inEmissive, inOpacity.Value, inSmooth.Value);
             
-            Material material = new Material(outMaterial, mType.Mesh);
+            Material material = new Material(outMaterial, va3cMaterialType.Mesh);
 
             DA.SetData(0, material);
         }

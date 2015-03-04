@@ -33,9 +33,9 @@ namespace GHva3c
 
         private string myID;
 
-        public eType Type { get; set; }
+        public va3cElementType Type { get; set; }
 
-        public string Json { get; set; }
+        public string GeometryJson { get; set; }
 
         public Material Material { get; set; }
 
@@ -66,25 +66,24 @@ namespace GHva3c
         }
 
         public Element() { }
-        public Element(string json, eType type)
+        public Element(string json, va3cElementType type)
         {
-            Json = json;
+            GeometryJson = json;
             Type = type;
         }
 
-        public Element(string json, eType type, Material material)
+        public Element(string json, va3cElementType type, Material material)
         {
-            Json = json;
+            GeometryJson = json;
             Type = type;
             Material = material;
         }
     }
 
-    public enum eType
+    public enum va3cElementType
     {
         Mesh,
         Line,
-        Camera,
-        Scene
+        Camera
     }
 }

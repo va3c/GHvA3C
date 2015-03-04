@@ -69,7 +69,7 @@ namespace GHva3c
             //spin up a JSON material from the inputs
             string outJSON = ConstructMaterial(inColor, inNumber);
 
-            Material material = new Material(outJSON, mType.Line);
+            Material material = new Material(outJSON, va3cMaterialType.Line);
             
             //output
             DA.SetData(0, material);

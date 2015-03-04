@@ -107,7 +107,7 @@ namespace GHva3c
                 return;
             }
 
-            if (material.Type != mType.Mesh)
+            if (material.Type != va3cMaterialType.Mesh)
             {
                 throw new Exception("Please use a MESH Material");
             }
@@ -115,7 +115,7 @@ namespace GHva3c
             //create json from mesh
             string outJSON = _Utilities.geoJSON(mesh.Value, attributesDict);
 
-            Element e = new Element(outJSON,eType.Mesh, material);
+            Element e = new Element(outJSON,va3cElementType.Mesh, material);
 
             DA.SetData(0, e);
         }

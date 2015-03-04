@@ -46,7 +46,6 @@ namespace GHva3c
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddTextParameter("Message", "Out", "Message", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Json Presentation of Scene", "J_Scene", "Json Presentation of Scene", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -90,20 +89,20 @@ namespace GHva3c
             foreach (Element e in inElements)
             {
                 GH_String g = new GH_String();
-                g.Value = e.Json;
+                g.Value = e.GeometryJson;
 
-                if (e.Type != eType.Camera)
+                if (e.Type != va3cElementType.Camera)
                 {
                     GH_String m = new GH_String();
-                    m.Value = e.Material.Json;
+                    m.Value = e.Material.MaterialJson;
 
-                    if (e.Type == eType.Mesh)
+                    if (e.Type == va3cElementType.Mesh)
                     {
                         inMeshGeometry.Add(g);
                         inMeshMaterial.Add(m);
                     }
 
-                    if (e.Type == eType.Line)
+                    if (e.Type == va3cElementType.Line)
                     {
                         inLineGeometry.Add(g);
                         inLineMaterial.Add(m);
@@ -181,14 +180,11 @@ namespace GHva3c
                 string outJSON = sceneJSON(inMeshGeometry, inMeshMaterial, inLineGeometry, inLineMaterial, inCameras);
                 outJSON = outJSON.Replace("OOO", "object");
 
-                Element e = new Element(outJSON, eType.Scene);
-
                 //write the file to disk
                 File.WriteAllText(myFilePath, outJSON);
 
                 //report success
                 DA.SetData(0, "JSON file written successfully!");
-                DA.SetData(1, e);
             }
             catch (Exception e)
             {
@@ -216,7 +212,6 @@ namespace GHva3c
             //populate mesh geometries:
             jason.geometries = new object[size];   //array for geometry - both lines and meshes
             jason.materials = new object[size];  //array for materials - both lines and meshes
-            jason.cameras = new object[cameraList.Count];
 
 
             #region Mesh management
@@ -295,16 +290,21 @@ namespace GHva3c
             //populate line geometries
             int cameraCounter = 0;
 
-            Dictionary<object, object> CameraDict = new Dictionary<object, object>();
+            Dictionary<string, List<object>> CameraDict = new Dictionary<string, List<object>>();
             foreach (GH_String l in cameraList)
             {
                 //deserialize the line and the material
                 va3cCameraCatcher lc = JsonConvert.DeserializeObject<va3cCameraCatcher>(l.Value);
 
-                //add the deserialized values to the jason object
-                jason.cameras[cameraCounter] = lc;
+                ////add the deserialized values to the jason object
+                //jason.cameras[cameraCounter] = lc;
 
-                CameraDict.Add(lc.eye, lc.target);
+                List<object> cameraSettings = new List<object>();
+                cameraSettings.Add(lc.eye);
+                cameraSettings.Add(lc.target);
+
+                CameraDict.Add(lc.name, cameraSettings);
+                //CameraDict.Add(lc.eye, lc.target);
 
                 //increment counters
                 cameraCounter++;
@@ -350,13 +350,12 @@ namespace GHva3c
 
 
             int j=0;
-            foreach (object e in CameraDict.Keys)
+            foreach (var e in CameraDict.Keys)
             {
                 jason.OOO.userdata[j]= new ExpandoObject();
-                jason.OOO.userdata[j].uuid = Guid.NewGuid();
-                jason.OOO.userdata[j].name = "camera " + j.ToString();
-                jason.OOO.userdata[j].eye = e;
-                jason.OOO.userdata[j].target = CameraDict[e];
+                jason.OOO.userdata[j].name = e;
+                jason.OOO.userdata[j].eye = CameraDict[e][0];
+                jason.OOO.userdata[j].target = CameraDict[e][1];
 
                 j++;
             }

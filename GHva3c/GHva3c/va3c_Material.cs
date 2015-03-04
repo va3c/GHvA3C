@@ -33,9 +33,9 @@ namespace GHva3c
 
         private string myID;
 
-        public mType Type { get; set; }
+        public va3cMaterialType Type { get; set; }
 
-        public string Json { get; set; }
+        public string MaterialJson { get; set; }
 
 
         //PROPERTIES
@@ -66,22 +66,17 @@ namespace GHva3c
 
         public Material() { }
 
-        public Material(string json, mType type)
+        public Material(string json, va3cMaterialType type)
         {
             Type = type;
-            Json = json;
+            MaterialJson = json;
         }
 
         
     }
-    public enum mType
+    public enum va3cMaterialType
     {
         Mesh,
         Line
     }
-
-    
-
-
-    
 }

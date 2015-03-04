@@ -72,7 +72,7 @@ namespace GHva3c
                 string outJSON = pointJSON(eye, target,name);
                 outJSON = outJSON.Replace("OOO", "object");
                 
-                Element e = new Element(outJSON, eType.Camera);
+                Element e = new Element(outJSON, va3cElementType.Camera);
                 DA.SetData(0, e);
             }
             catch (Exception)

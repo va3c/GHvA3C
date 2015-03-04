@@ -74,7 +74,7 @@ namespace GHva3c
             }
 
             outMaterial = CreateMaterial(inColor, inOpacity);
-            Material material = new Material(outMaterial, mType.Mesh);
+            Material material = new Material(outMaterial, va3cMaterialType.Mesh);
 
             //set the output - build up a basic material json string
             DA.SetData(0, material);

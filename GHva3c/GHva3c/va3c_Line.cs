@@ -73,7 +73,7 @@ namespace GHva3c
                 return;
             }
 
-            if (material.Type != mType.Line)
+            if (material.Type != va3cMaterialType.Line)
             {
                 throw new Exception("Please use a LINE Material");
             }
@@ -83,7 +83,7 @@ namespace GHva3c
             string outJSON = lineJSON(line.Value);
 
 
-            Element e = new Element(outJSON, eType.Line, material);
+            Element e = new Element(outJSON, va3cElementType.Line, material);
 
             //output results
             DA.SetData(0, e);
