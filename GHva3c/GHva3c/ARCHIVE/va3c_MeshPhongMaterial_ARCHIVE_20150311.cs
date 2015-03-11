@@ -11,12 +11,12 @@ using GHva3c.Properties;
 
 namespace GHva3c
 {
-    public class va3c_MeshPhongMaterial : GH_Component
+    public class va3c_MeshPhongMaterial_ARCHIVE_20140311 : GH_Component
     {
         /// <summary>
         /// Initializes a new instance of the va3c_MeshPhongMaterial class.
         /// </summary>
-        public va3c_MeshPhongMaterial()
+        public va3c_MeshPhongMaterial_ARCHIVE_20140311()
             : base("vA3C_MeshPhongMaterial", "vA3C_MeshPhongMaterial",
                 "Create a shiny material for meshes",
                 "vA3C", "materials")
@@ -27,7 +27,7 @@ namespace GHva3c
         {
             get
             {
-                return GH_Exposure.secondary;
+                return GH_Exposure.hidden;
             }
         }
 
@@ -54,7 +54,7 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Mesh Material", "Mm", "Mesh Material.  Feed this into the vA3C Mesh component.", GH_ParamAccess.item);
+            pManager.AddTextParameter("Mesh Material", "Mm", "Mesh Material JSON representation.  Feed this into the Scene Compiler component.", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -88,10 +88,8 @@ namespace GHva3c
 
             outMaterial = ConstructPhongMaterial(inColor, inAmbient, inEmissive, inSpecular, inShininess.Value, inOpacity.Value);
             //call json conversion function
-            
-            Material material = new Material(outMaterial, va3cMaterialType.Mesh);
 
-            DA.SetData(0, material);
+            DA.SetData(0, outMaterial);
         }
 
         private string ConstructPhongMaterial(GH_Colour col, GH_Colour amb, GH_Colour em, GH_Colour spec, Double shin, Double opp)
@@ -123,7 +121,7 @@ namespace GHva3c
             get
             {
                 //You can add image files to your project resources and access them like this:
-                return Resources.MESH_PHONG;
+                return Resources.MESH_PHONG_01_OLD;
             }
         }
 
@@ -132,7 +130,7 @@ namespace GHva3c
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("{662f53e5-9dae-443a-b554-c7872c218cbd}"); }
+            get { return new Guid("{9e566ce6-dc3f-4606-b895-48b90e0caf72}"); }
         }
     }
 }

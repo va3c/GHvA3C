@@ -161,7 +161,7 @@ namespace GHva3c
             }
 
             //if the directory exists but the file type is not .xlsx, throw a warning and set pathString = noFIle
-            if (Directory.Exists(Path.GetDirectoryName(myFilePath)) && !isJSONfile(Path.GetExtension(myFilePath)))
+            if (Directory.Exists(Path.GetDirectoryName(myFilePath)) && ! isJSONfile(Path.GetExtension(myFilePath)))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
                     "Please provide a file of type .js or .json.  Something like: 'myExampleFile.json'.");
@@ -393,7 +393,7 @@ namespace GHva3c
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("{065f9b89-44fd-4660-aba8-f4211e5e2ef9}"); }
+            get { return new Guid("{9e0fb676-f7a2-41b2-bf39-1dbdb9e8478d}"); }
         }
     }
 }

@@ -112,7 +112,7 @@ namespace GHva3c
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("{17b172a6-cdb8-4dc0-b708-c54cd319876b}"); }
+            get { return new Guid("{54fcfed8-affa-4d93-8320-aa49d2ca7c6d}"); }
         }
     }
 }

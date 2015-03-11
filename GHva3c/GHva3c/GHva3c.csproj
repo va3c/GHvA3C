@@ -68,6 +68,15 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ARCHIVE\va3c_LineBasicMaterial_ARCHIVE_20150311.cs" />
+    <Compile Include="ARCHIVE\va3c_Line_ARCHIVE_20150311.cs" />
+    <Compile Include="ARCHIVE\va3c_MeshBasicMaterial_ARCHIVE_20150311.cs" />
+    <Compile Include="ARCHIVE\va3c_MeshColoredFaces_ARCHIVE_20150311.cs" />
+    <Compile Include="ARCHIVE\va3c_MeshColoredVertices_ARCHIVE_20150311.cs" />
+    <Compile Include="ARCHIVE\va3c_MeshLambertMaterial_ARCHIVE_20150311.cs" />
+    <Compile Include="ARCHIVE\va3c_MeshPhongMaterial_ARCHIVE_20150311.cs" />
+    <Compile Include="ARCHIVE\va3c_Mesh_ARCHIVE_20150311.cs" />
+    <Compile Include="ARCHIVE\va3c_SceneCompiler_ARCHIVE_20150311.cs" />
     <Compile Include="va3c_Material.cs" />
     <Compile Include="va3c_Element.cs" />
     <Compile Include="GHva3cInfo.cs" />
@@ -130,6 +139,33 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\MESH_LAMBERT.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LINE-01_OLD.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LINE_MATERIAL-01_OLD.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MESH_BASIC-01_OLD.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MESH_FACES-01_OLD.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MESH_LAMBERT-01_OLD.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MESH_PHONG-01_OLD.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MESH-01_OLD.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\3-01_OLD.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MESH_VERTICES-01_OLD.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
