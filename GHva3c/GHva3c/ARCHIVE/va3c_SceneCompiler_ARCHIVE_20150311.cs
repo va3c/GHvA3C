@@ -29,6 +29,14 @@ namespace GHva3c
         {
         }
 
+        public override GH_Exposure Exposure
+        {
+            get
+            {
+                return GH_Exposure.hidden;
+            }
+        }
+
         /// <summary>
         /// Registers all the input parameters for this component.
         /// </summary>
@@ -286,7 +294,7 @@ namespace GHva3c
 
                 //deserialize the line and the material
                 va3cLineCatcher lc = JsonConvert.DeserializeObject<va3cLineCatcher>(l.Value);
-                va3cLineBasicMaterialCatcher lmc = 
+                va3cLineBasicMaterialCatcher lmc =
                     JsonConvert.DeserializeObject<va3cLineBasicMaterialCatcher>(linesMaterialList[lineMaterialCounter].Value);
                 //add the deserialized values to the jason object
                 jason.geometries[lineCounter] = lc;
