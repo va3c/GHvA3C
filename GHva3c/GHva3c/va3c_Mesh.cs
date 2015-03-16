@@ -45,6 +45,8 @@ namespace GHva3c
             pManager[2].Optional = true;
             pManager.AddTextParameter("Attribute Values", "[aV]", "Attribute Values", GH_ParamAccess.list);
             pManager[3].Optional = true;
+            pManager.AddTextParameter("Layer", "[L]", "Layer", GH_ParamAccess.item);
+            pManager[4].Optional = true;
         }
 
         /// <summary>
@@ -70,6 +72,8 @@ namespace GHva3c
             List<GH_String> attributeValues = new List<GH_String>();
             Dictionary<string, object> attributesDict = new Dictionary<string, object>();
             Material material = null;
+            string layerName = "";
+            
 
             //catch inputs and populate local variables
             if (!DA.GetData(0, ref mesh))
@@ -80,22 +84,6 @@ namespace GHva3c
             {
                 return;
             }
-            DA.GetDataList(2, attributeNames);
-            DA.GetDataList(3, attributeValues);
-            if (attributeValues.Count != attributeNames.Count)
-            {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Please provide equal numbers of attribute names and values.");
-                return;
-            }
-
-            //populate dictionary
-            int i=0;
-            foreach (var a in attributeNames)
-            {
-                attributesDict.Add(a.Value, attributeValues[i].Value);
-                i++;
-            }
-
 
             //Make sure the material is of mType Mesh
             if (!DA.GetData(1, ref material))
@@ -111,12 +99,35 @@ namespace GHva3c
             {
                 throw new Exception("Please use a MESH Material");
             }
+            
+            DA.GetDataList(2, attributeNames);
+            DA.GetDataList(3, attributeValues);
+            if (attributeValues.Count != attributeNames.Count)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Please provide equal numbers of attribute names and values.");
+                return;
+            }
+
+            Layer layer = null;
+            DA.GetData(4, ref layerName);
+            if (layerName != "")
+            {
+                layer = new Layer(layerName);
+            }
+
+            //populate dictionary
+            int i=0;
+            foreach (var a in attributeNames)
+            {
+                attributesDict.Add(a.Value, attributeValues[i].Value);
+                i++;
+            }
 
             //create json from mesh
             string outJSON = _Utilities.geoJSON(mesh.Value, attributesDict);
 
-            Element e = new Element(outJSON,va3cElementType.Mesh, material);
-
+            Element e = new Element(outJSON,va3cElementType.Mesh, material, layer);
+            
             DA.SetData(0, e);
         }
 
