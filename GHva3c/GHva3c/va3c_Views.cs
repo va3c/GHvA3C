@@ -45,7 +45,7 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Camera", "Ce", "Camera Element", GH_ParamAccess.item);
+            pManager.AddGenericParameter("View", "Ve", "View Element", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -82,17 +82,17 @@ namespace GHva3c
         }
 
 
-        ///// <summary>
-        ///// Provides an Icon for the component.
-        ///// </summary>
-        //protected override System.Drawing.Bitmap Icon
-        //{
-        //    get
-        //    {
-        //        //You can add image files to your project resources and access them like this:
-        //        return Resources._3;
-        //    }
-        //}
+        /// <summary>
+        /// Provides an Icon for the component.
+        /// </summary>
+        protected override System.Drawing.Bitmap Icon
+        {
+            get
+            {
+                //You can add image files to your project resources and access them like this:
+                return Resources.CAMERA;
+            }
+        }
 
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
@@ -113,15 +113,15 @@ namespace GHva3c
 
             jason.eye = new ExpandoObject();
             //populate data object properties
-            jason.eye.X = Math.Round(E.X * -1.0, 5);
-            jason.eye.Y = Math.Round(E.Z, 5);
-            jason.eye.Z = Math.Round(E.Y, 5);
+            jason.eye.X = Math.Round(E.X, 5);
+            jason.eye.Y = Math.Round(E.Y, 5);
+            jason.eye.Z = Math.Round(E.Z, 5);
             
             jason.target = new ExpandoObject();
             //populate data object properties
-            jason.target.X = Math.Round(T.X * -1.0, 5);
-            jason.target.Y = Math.Round(T.Z, 5);
-            jason.target.Z = Math.Round(T.Y, 5);
+            jason.target.X = Math.Round(T.X, 5);
+            jason.target.Y = Math.Round(T.Y, 5);
+            jason.target.Z = Math.Round(T.Z, 5);
             
             //return
             return JsonConvert.SerializeObject(jason);
