@@ -83,6 +83,26 @@ namespace GHva3c.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap CAMERA {
+            get {
+                object obj = ResourceManager.GetObject("CAMERA", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap CAMERA_OLD {
+            get {
+                object obj = ResourceManager.GetObject("CAMERA_OLD", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap LINE {
             get {
                 object obj = ResourceManager.GetObject("LINE", resourceCulture);
