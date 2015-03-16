@@ -39,6 +39,8 @@ namespace GHva3c
 
         public Material Material { get; set; }
 
+        public Layer Layer { get; set; }
+
 
         //PROPERTIES
         //[DataMember]
@@ -72,11 +74,12 @@ namespace GHva3c
             Type = type;
         }
 
-        public Element(string json, va3cElementType type, Material material)
+        public Element(string json, va3cElementType type, Material material, Layer layer)
         {
             GeometryJson = json;
             Type = type;
             Material = material;
+            Layer = layer;
         }
     }
 

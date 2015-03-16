@@ -18,23 +18,23 @@ using Rhino.Geometry;
 
 namespace GHva3c
 {
-    class MaterialParameter:GH_Goo<Material>
+    class ElementParameter:GH_Goo<Element>
     {
         public override IGH_Goo Duplicate()
         {
-            MaterialParameter element = new MaterialParameter();
+            ElementParameter element = new ElementParameter();
             element.Value = Value;
             return element;
         }
 
         public override string TypeDescription
         {
-            get { return "Material: A high level vA3C class to inherit from"; }
+            get { return "Element: A high level vA3C class to inherit from"; }
         }
 
         public override string TypeName
         {
-            get { return "Material"; }
+            get { return "Element"; }
         }
 
         public override bool IsValid
