@@ -24,7 +24,7 @@ namespace GHva3c
             : base("vA3C_Mesh", "vA3C_Mesh",
                 "Creates a vA3C mesh from a grasshopper mesh.",
                 "vA3C", "geometry")
-        {}
+        { }
 
         public override GH_Exposure Exposure
         {
@@ -55,9 +55,9 @@ namespace GHva3c
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             //pManager.AddTextParameter("Mesh JSON", "Mj", "Mesh JSON output to feed into scene compiler component", GH_ParamAccess.item);
-            
+
             pManager.AddGenericParameter("Mesh Element", "Me", "Mesh element output to feed into scene compiler component", GH_ParamAccess.item);
-            
+
         }
 
         /// <summary>
@@ -72,8 +72,8 @@ namespace GHva3c
             List<GH_String> attributeValues = new List<GH_String>();
             Dictionary<string, object> attributesDict = new Dictionary<string, object>();
             Material material = null;
-            string layerName = "";
-            
+            string layerName = "Default";
+
 
             //catch inputs and populate local variables
             if (!DA.GetData(0, ref mesh))
@@ -99,7 +99,7 @@ namespace GHva3c
             {
                 throw new Exception("Please use a MESH Material");
             }
-            
+
             DA.GetDataList(2, attributeNames);
             DA.GetDataList(3, attributeValues);
             if (attributeValues.Count != attributeNames.Count)
@@ -110,13 +110,12 @@ namespace GHva3c
 
             Layer layer = null;
             DA.GetData(4, ref layerName);
-            if (layerName != "")
-            {
-                layer = new Layer(layerName);
-            }
+
+            layer = new Layer(layerName);
+
 
             //populate dictionary
-            int i=0;
+            int i = 0;
             foreach (var a in attributeNames)
             {
                 attributesDict.Add(a.Value, attributeValues[i].Value);
@@ -126,8 +125,8 @@ namespace GHva3c
             //create json from mesh
             string outJSON = _Utilities.geoJSON(mesh.Value, attributesDict);
 
-            Element e = new Element(outJSON,va3cElementType.Mesh, material, layer);
-            
+            Element e = new Element(outJSON, va3cElementType.Mesh, material, layer);
+
             DA.SetData(0, e);
         }
 
