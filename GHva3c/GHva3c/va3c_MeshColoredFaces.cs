@@ -45,6 +45,8 @@ namespace GHva3c
             pManager[2].Optional = true;
             pManager.AddTextParameter("Attribute Values", "[aV]", "Attribute Values", GH_ParamAccess.list);
             pManager[3].Optional = true;
+            pManager.AddTextParameter("Layer", "[L]", "Layer", GH_ParamAccess.item);
+            pManager[4].Optional = true;
         }
 
         /// <summary>
@@ -68,7 +70,8 @@ namespace GHva3c
             List<GH_String> attributeNames = new List<GH_String>();
             List<GH_String> attributeValues = new List<GH_String>();
             Dictionary<string, object> attributesDict = new Dictionary<string, object>();
-
+            Layer layer = null;
+            string layerName = "Default";
             //catch inputs and populate local variables
             if (!DA.GetData(0, ref mesh))
             {
@@ -90,6 +93,10 @@ namespace GHva3c
                 return;
             }
 
+            DA.GetData(4, ref layerName);
+
+            layer = new Layer(layerName);
+
             //populate dictionary
             int i = 0;
             foreach (var a in attributeNames)
@@ -105,7 +112,7 @@ namespace GHva3c
             string meshJSON = _Utilities.geoJSON(mesh.Value, attributesDict);
 
             Material material = new Material(meshMaterailJSON, va3cMaterialType.Mesh);
-            Element e = new Element(meshJSON, va3cElementType.Mesh, material);
+            Element e = new Element(meshJSON, va3cElementType.Mesh, material, layer);
 
             DA.SetData(0, e);
            
