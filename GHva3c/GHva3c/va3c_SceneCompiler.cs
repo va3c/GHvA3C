@@ -34,7 +34,7 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddBooleanParameter("write?", "W?", "Write the va3c JSON file to disk?", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("write?", "W?", "Write the VA3C JSON file to disk?", GH_ParamAccess.item);
             pManager.AddTextParameter("filePath", "Fp", "Full filepath of the file you'd like to create.  Files will be overwritten automatically.", GH_ParamAccess.item);
             pManager.AddGenericParameter("Elements", "E", "va3c Elements to add to the scene.", GH_ParamAccess.list);
             pManager[2].DataMapping = GH_DataMapping.Flatten;
@@ -72,7 +72,7 @@ namespace GHva3c
             //if we are not told to run, return
             if (!write)
             {
-                string err = "Set the 'W?' input to true to write the JSON file to disk.";
+                string err = "Set the 'W?' input to true to write the JSON file to disk";
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, err);
                 DA.SetData(0, err);
                 return;
@@ -81,10 +81,15 @@ namespace GHva3c
 
             List<GH_String> inMeshGeometry = new List<GH_String>();
             List<GH_String> inLineGeometry = new List<GH_String>();
-            List<GH_String> inCameras = new List<GH_String>();
+            List<GH_String> inViews = new List<GH_String>();
 
             List<GH_String> inMeshMaterial = new List<GH_String>();
             List<GH_String> inLineMaterial = new List<GH_String>();
+
+            List<GH_String> inMeshLayer = new List<GH_String>();
+            List<GH_String> inLineLayer = new List<GH_String>();
+
+            Dictionary<string, List<Element>> definitionLayers = new Dictionary<string, List<Element>>();
 
             foreach (Element e in inElements)
             {
@@ -96,21 +101,43 @@ namespace GHva3c
                     GH_String m = new GH_String();
                     m.Value = e.Material.MaterialJson;
 
+                    string layerName = "";
+                    if (e.Layer == null) layerName = "Default";
+                    else layerName = e.Layer.Name;
+
+                    GH_String l = new GH_String();
+                    l.Value = layerName;
+                    
+
                     if (e.Type == va3cElementType.Mesh)
                     {
                         inMeshGeometry.Add(g);
                         inMeshMaterial.Add(m);
+                        inMeshLayer.Add(l);
                     }
 
                     if (e.Type == va3cElementType.Line)
                     {
                         inLineGeometry.Add(g);
                         inLineMaterial.Add(m);
-                    } 
+                        inLineLayer.Add(l);
+                    }
+                    
+                    
+
+                    if (!definitionLayers.Keys.Contains(layerName))
+                    {
+                        List<Element> layerElements = new List<Element>();
+                        definitionLayers.Add(layerName, layerElements);
+                    }
+
+                    definitionLayers[layerName].Add(e);
+
+
                 }
                 else
                 {
-                    inCameras.Add(g);
+                    inViews.Add(g);
                 }
             }
 
@@ -161,7 +188,7 @@ namespace GHva3c
             }
 
             //if the directory exists but the file type is not .xlsx, throw a warning and set pathString = noFIle
-            if (Directory.Exists(Path.GetDirectoryName(myFilePath)) && ! isJSONfile(Path.GetExtension(myFilePath)))
+            if (Directory.Exists(Path.GetDirectoryName(myFilePath)) && !isJSONfile(Path.GetExtension(myFilePath)))
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
                     "Please provide a file of type .js or .json.  Something like: 'myExampleFile.json'.");
@@ -177,7 +204,7 @@ namespace GHva3c
             try
             {
                 //create json from lists of json:
-                string outJSON = sceneJSON(inMeshGeometry, inMeshMaterial, inLineGeometry, inLineMaterial, inCameras);
+                string outJSON = sceneJSON(inMeshGeometry, inMeshMaterial, inMeshLayer, inLineGeometry, inLineMaterial,inLineLayer, inViews, definitionLayers);
                 outJSON = outJSON.Replace("OOO", "object");
 
                 //write the file to disk
@@ -195,7 +222,7 @@ namespace GHva3c
             }
         }
 
-        private string sceneJSON(List<GH_String> meshList, List<GH_String> meshMaterialList, List<GH_String> linesList, List<GH_String> linesMaterialList, List<GH_String> cameraList)
+        private string sceneJSON(List<GH_String> meshList, List<GH_String> meshMaterialList, List<GH_String> meshLayerList, List<GH_String> linesList, List<GH_String> linesMaterialList, List<GH_String> lineLayerList, List<GH_String> viewList, Dictionary<string, List<Element>> defLayers)
         {
 
             //create a dynamic object to populate
@@ -219,7 +246,7 @@ namespace GHva3c
             Dictionary<string, object> MeshDict = new Dictionary<string, object>();
             Dictionary<string, va3cAttributesCatcher> attrDict = new Dictionary<string, va3cAttributesCatcher>();
 
-           
+
             foreach (GH_String m in meshList)
             {
                 //deserialize the geometry and attributes, and add them to our object
@@ -258,7 +285,7 @@ namespace GHva3c
                 }
                 meshCounter++;
 
-            } 
+            }
             #endregion
 
             #region Line management
@@ -282,33 +309,29 @@ namespace GHva3c
                 //increment counters
                 lineCounter++;
                 lineMaterialCounter++;
-            } 
+            }
             #endregion
 
 
             #region Camera management
             //populate line geometries
-            int cameraCounter = 0;
+            int viewCounter = 0;
 
-            Dictionary<string, List<object>> CameraDict = new Dictionary<string, List<object>>();
-            foreach (GH_String l in cameraList)
+            Dictionary<string, List<object>> viewDict = new Dictionary<string, List<object>>();
+            foreach (GH_String l in viewList)
             {
                 //deserialize the line and the material
                 va3cCameraCatcher lc = JsonConvert.DeserializeObject<va3cCameraCatcher>(l.Value);
 
-                ////add the deserialized values to the jason object
-                //jason.cameras[cameraCounter] = lc;
+                List<object> viewSettings = new List<object>();
+                viewSettings.Add(lc.eye);
+                viewSettings.Add(lc.target);
 
-                List<object> cameraSettings = new List<object>();
-                cameraSettings.Add(lc.eye);
-                cameraSettings.Add(lc.target);
-
-                CameraDict.Add(lc.name, cameraSettings);
-                //CameraDict.Add(lc.eye, lc.target);
+                viewDict.Add(lc.name, viewSettings);
 
                 //increment counters
-                cameraCounter++;
-                
+                viewCounter++;
+
             }
             #endregion
 
@@ -319,7 +342,9 @@ namespace GHva3c
             int[] numbers = new int[16] { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
             jason.OOO.matrix = numbers;
             jason.OOO.children = new object[meshList.Count + linesList.Count];
-            jason.OOO.userdata = new object[cameraList.Count];
+            jason.OOO.userData = new ExpandoObject();
+
+            
 
             //create childern
             //loop over meshes and lines
@@ -333,9 +358,17 @@ namespace GHva3c
                 jason.OOO.children[i].geometry = g;
                 jason.OOO.children[i].material = MeshDict[g];
                 jason.OOO.children[i].matrix = numbers;
-                jason.OOO.children[i].userData = attrDict[g].userData;
+                //jason.OOO.children[i].userData = attrDict[g].userData;
+
+                jason.OOO.children[i].userData = new ExpandoObject();
+                jason.OOO.children[i].userData.attributes = new object[1];
+                jason.OOO.children[i].userData.attributes[0]=attrDict[g].userData;
+                jason.OOO.children[i].userData.layer = new object[1];
+                jason.OOO.children[i].userData.layer[0] = new ExpandoObject();
+                jason.OOO.children[i].userData.layer[0].name = meshLayerList[i].Value;
                 i++;
             }
+            int lineCount = 0;
             foreach (var l in LineDict.Keys)
             {
                 jason.OOO.children[i] = new ExpandoObject();
@@ -345,20 +378,38 @@ namespace GHva3c
                 jason.OOO.children[i].geometry = l;
                 jason.OOO.children[i].material = LineDict[l];
                 jason.OOO.children[i].matrix = numbers;
+                jason.OOO.children[i].userData = new ExpandoObject();
+                jason.OOO.children[i].userData.layer = new object[1];
+                jason.OOO.children[i].userData.layer[0] = new ExpandoObject();
+                jason.OOO.children[i].userData.layer[0].name = lineLayerList[lineCount].Value;
                 i++;
+                lineCount++;
             }
 
-
-            int j=0;
-            foreach (var e in CameraDict.Keys)
+            jason.OOO.userData.views = new object[viewList.Count];
+            int j = 0;
+            foreach (var n in viewDict.Keys)
             {
-                jason.OOO.userdata[j]= new ExpandoObject();
-                jason.OOO.userdata[j].name = e;
-                jason.OOO.userdata[j].eye = CameraDict[e][0];
-                jason.OOO.userdata[j].target = CameraDict[e][1];
+                jason.OOO.userData.views[j] = new ExpandoObject();
+                jason.OOO.userData.views[j].name = n;
+                jason.OOO.userData.views[j].eye = viewDict[n][0];
+                jason.OOO.userData.views[j].target = viewDict[n][1];
 
                 j++;
             }
+
+            jason.OOO.userData.layers = new object[defLayers.Keys.Count];
+            int li = 0;
+            foreach (var n in defLayers.Keys)
+            {
+                jason.OOO.userData.layers[li] = new ExpandoObject();
+                jason.OOO.userData.layers[li].name = n;
+                //jason.OOO.userData.layers[li].elements = defLayers[n];
+                //maybe add here children and parent layers if any...
+
+                li++;
+            }
+
 
             return JsonConvert.SerializeObject(jason);
         }
