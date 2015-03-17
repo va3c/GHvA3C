@@ -41,6 +41,8 @@ namespace GHva3c
         {
             pManager.AddLineParameter("Line", "L", "A line to convert into a va3c JSON representation of the line", GH_ParamAccess.item);
             pManager.AddGenericParameter("Line Material", "Lm", "Line Material", GH_ParamAccess.item);
+            pManager.AddTextParameter("Layer", "[L]", "Layer", GH_ParamAccess.item);
+            pManager[2].Optional = true;
 
         }
 
@@ -61,7 +63,8 @@ namespace GHva3c
             //local variables
             GH_Line line = null;
             Material material = null;
-
+            Layer layer = null;
+            string layerName = "Default";
             //catch inputs and populate local variables
             if (!DA.GetData(0, ref line))
             {
@@ -77,13 +80,17 @@ namespace GHva3c
             {
                 throw new Exception("Please use a LINE Material");
             }
-            
+
+            DA.GetData(2, ref layerName);
+
+            layer = new Layer(layerName);
+
 
             //create JSON from line
             string outJSON = lineJSON(line.Value);
 
 
-            Element e = new Element(outJSON, va3cElementType.Line, material);
+            Element e = new Element(outJSON, va3cElementType.Line, material, layer);
 
             //output results
             DA.SetData(0, e);
@@ -102,7 +109,7 @@ namespace GHva3c
 
             //populate data object properties
             jason.data.vertices = new object[6];
-            jason.data.vertices[0] = Math.Round( line.FromX * -1.0 , 5);
+            jason.data.vertices[0] = Math.Round(line.FromX * -1.0, 5);
             jason.data.vertices[1] = Math.Round(line.FromZ, 5);
             jason.data.vertices[2] = Math.Round(line.FromY, 5);
             jason.data.vertices[3] = Math.Round(line.ToX * -1.0, 5);
