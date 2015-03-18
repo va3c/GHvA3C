@@ -93,6 +93,7 @@ namespace GHva3c
 
             foreach (Element e in inElements)
             {
+                if (e == null) continue;
                 GH_String g = new GH_String();
                 g.Value = e.GeometryJson;
 
@@ -254,6 +255,7 @@ namespace GHva3c
                 va3cAttributesCatcher ac = JsonConvert.DeserializeObject<va3cAttributesCatcher>(m.Value);
                 jason.geometries[meshCounter] = c;
                 attrDict.Add(c.uuid, ac);
+                
 
                 //now that we have different types of materials, we need to know which catcher to call
                 //use the va3cBaseMaterialCatcher class to determine a material's type, then call the appropriate catcher
@@ -358,14 +360,7 @@ namespace GHva3c
                 jason.OOO.children[i].geometry = g;
                 jason.OOO.children[i].material = MeshDict[g];
                 jason.OOO.children[i].matrix = numbers;
-                //jason.OOO.children[i].userData = attrDict[g].userData;
-
-                jason.OOO.children[i].userData = new ExpandoObject();
-                jason.OOO.children[i].userData.attributes = new object[1];
-                jason.OOO.children[i].userData.attributes[0]=attrDict[g].userData;
-                jason.OOO.children[i].userData.layer = new object[1];
-                jason.OOO.children[i].userData.layer[0] = new ExpandoObject();
-                jason.OOO.children[i].userData.layer[0].name = meshLayerList[i].Value;
+                jason.OOO.children[i].userData = attrDict[g].userData;
                 i++;
             }
             int lineCount = 0;
@@ -379,9 +374,7 @@ namespace GHva3c
                 jason.OOO.children[i].material = LineDict[l];
                 jason.OOO.children[i].matrix = numbers;
                 jason.OOO.children[i].userData = new ExpandoObject();
-                jason.OOO.children[i].userData.layer = new object[1];
-                jason.OOO.children[i].userData.layer[0] = new ExpandoObject();
-                jason.OOO.children[i].userData.layer[0].name = lineLayerList[lineCount].Value;
+                jason.OOO.children[i].userData.layer = lineLayerList[lineCount].Value;
                 i++;
                 lineCount++;
             }
@@ -404,9 +397,6 @@ namespace GHva3c
             {
                 jason.OOO.userData.layers[li] = new ExpandoObject();
                 jason.OOO.userData.layers[li].name = n;
-                //jason.OOO.userData.layers[li].elements = defLayers[n];
-                //maybe add here children and parent layers if any...
-
                 li++;
             }
 
