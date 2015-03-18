@@ -105,6 +105,9 @@ namespace GHva3c
                 i++;
             }
 
+            //add the layer name to the attributes dictionary
+            attributesDict.Add("layer", layerName);
+
             //create MeshFaceMaterial and assign mesh face material indexes in the attributes dict
             string meshMaterailJSON = makeMeshFaceMaterialJSON(mesh.Value, attributesDict, colors);
 

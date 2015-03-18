@@ -121,6 +121,9 @@ namespace GHva3c
                 attributesDict.Add(a.Value, attributeValues[i].Value);
                 i++;
             }
+            
+            //add the layer name to the attributes dictionary
+            attributesDict.Add("layer", layerName);
 
             //create json from mesh
             string outJSON = _Utilities.geoJSON(mesh.Value, attributesDict);
