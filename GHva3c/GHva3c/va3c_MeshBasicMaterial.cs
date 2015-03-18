@@ -49,7 +49,7 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddTextParameter("Mesh Material", "Mm", "Mesh Material JSON representation.  Feed this into the Scene Compiler component.", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Mesh Material", "Mm", "Mesh Material.  Feed this into the va3c Mesh component.", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -61,6 +61,7 @@ namespace GHva3c
             //local varaibles
             GH_Colour inColor = null;
             Double inOpacity = 1;
+            string outMaterial = null;
 
             //catch inputs and populate local variables
             if (!DA.GetData(0, ref inColor)) { return; }
@@ -72,11 +73,14 @@ namespace GHva3c
                 inOpacity = 1.0;
             }
 
+            outMaterial = CreateMaterial(inColor, inOpacity);
+            Material material = new Material(outMaterial, va3cMaterialType.Mesh);
+
             //set the output - build up a basic material json string
-            DA.SetData(0, CreateMaterial(inColor, inOpacity));
+            DA.SetData(0, material);
         }
 
-        private object CreateMaterial(GH_Colour inColor, double inOpacity)
+        private string CreateMaterial(GH_Colour inColor, double inOpacity)
         {
             dynamic jason = new ExpandoObject();
             jason.uuid = Guid.NewGuid();
@@ -108,7 +112,7 @@ namespace GHva3c
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("{17b172a6-cdb8-4dc0-b708-c54cd319876b}"); }
+            get { return new Guid("{54fcfed8-affa-4d93-8320-aa49d2ca7c6d}"); }
         }
     }
 }

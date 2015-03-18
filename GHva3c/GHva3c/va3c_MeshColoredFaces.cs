@@ -45,6 +45,8 @@ namespace GHva3c
             pManager[2].Optional = true;
             pManager.AddTextParameter("Attribute Values", "[aV]", "Attribute Values", GH_ParamAccess.list);
             pManager[3].Optional = true;
+            pManager.AddTextParameter("Layer", "[L]", "Layer", GH_ParamAccess.item);
+            pManager[4].Optional = true;
         }
 
         /// <summary>
@@ -52,8 +54,8 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddTextParameter("Mesh JSON", "Mj", "Mesh JSON output to feed into scene compiler component", GH_ParamAccess.item);
-            pManager.AddTextParameter("Mesh Material JSON", "Mm", "Mesh Material JSON output to feed into scene compiler component.  Make sure to amtch this material with the corresponding mesh from Mj above.", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Mesh Element", "Me", "Mesh Element output to feed into scene compiler component", GH_ParamAccess.item);
+            //pManager.AddGenericParameter("Mesh Material", "Mm", "Mesh Material to feed into the va3C Mesh component.  Make sure to amtch this material with the corresponding mesh from Mj above.", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -68,7 +70,8 @@ namespace GHva3c
             List<GH_String> attributeNames = new List<GH_String>();
             List<GH_String> attributeValues = new List<GH_String>();
             Dictionary<string, object> attributesDict = new Dictionary<string, object>();
-
+            Layer layer = null;
+            string layerName = "Default";
             //catch inputs and populate local variables
             if (!DA.GetData(0, ref mesh))
             {
@@ -90,6 +93,10 @@ namespace GHva3c
                 return;
             }
 
+            DA.GetData(4, ref layerName);
+
+            layer = new Layer(layerName);
+
             //populate dictionary
             int i = 0;
             foreach (var a in attributeNames)
@@ -98,15 +105,20 @@ namespace GHva3c
                 i++;
             }
 
+            //add the layer name to the attributes dictionary
+            attributesDict.Add("layer", layerName);
+
             //create MeshFaceMaterial and assign mesh face material indexes in the attributes dict
             string meshMaterailJSON = makeMeshFaceMaterialJSON(mesh.Value, attributesDict, colors);
 
             //create json from mesh
             string meshJSON = _Utilities.geoJSON(mesh.Value, attributesDict);
-            
 
-            DA.SetData(0, meshJSON);
-            DA.SetData(1, meshMaterailJSON);
+            Material material = new Material(meshMaterailJSON, va3cMaterialType.Mesh);
+            Element e = new Element(meshJSON, va3cElementType.Mesh, material, layer);
+
+            DA.SetData(0, e);
+           
         }
 
         private string makeMeshFaceMaterialJSON(Mesh mesh, Dictionary<string, object> attributesDict, List<GH_Colour> colors)
@@ -205,7 +217,7 @@ namespace GHva3c
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("{815a9851-bf5d-44d8-87a7-0915bc58a628}"); }
+            get { return new Guid("{5ebd3604-91d6-4312-9650-cee7feda73cc}"); }
         }
     }
 }

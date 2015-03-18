@@ -222,4 +222,11 @@ namespace GHva3c
         public double linewidth;
         public double opacity;
     }
+
+    public class va3cCameraCatcher
+    {
+        public string name;
+        public object eye;
+        public object target;
+    }
 }

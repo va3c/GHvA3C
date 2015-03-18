@@ -34,16 +34,10 @@ namespace GHva3c
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddBooleanParameter("write?", "W?", "Write the va3c JSON file to disk?", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("write?", "W?", "Write the VA3C JSON file to disk?", GH_ParamAccess.item);
             pManager.AddTextParameter("filePath", "Fp", "Full filepath of the file you'd like to create.  Files will be overwritten automatically.", GH_ParamAccess.item);
-            pManager.AddTextParameter("Meshes", "Mj", "va3c mesh JSON objects to add to the scene.", GH_ParamAccess.list);
-            pManager.AddTextParameter("Mesh Materials", "Mm", "va3c mesh materials to add to the scene.  Input one material per mesh.  If list lengths do not match we'll apply the last material to all subsequent meshses.", GH_ParamAccess.list);
-            pManager.AddTextParameter("Lines", "Lj", "vA3C line JSON objects to add to the scene.", GH_ParamAccess.list);
-            pManager.AddTextParameter("Line Materials", "Lm", "vA3C line materials to add to the scene.  Input one material per line.  If list lengths do not match we'll apply the last material to all subsequent lines.", GH_ParamAccess.list);
-            pManager[2].Optional = true;
-            pManager[3].Optional = true;
-            pManager[4].Optional = true;
-            pManager[5].Optional = true;
+            pManager.AddGenericParameter("Elements", "E", "va3c Elements to add to the scene.", GH_ParamAccess.list);
+            pManager[2].DataMapping = GH_DataMapping.Flatten;
         }
 
         /// <summary>
@@ -52,7 +46,6 @@ namespace GHva3c
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddTextParameter("Message", "Out", "Message", GH_ParamAccess.item);
-            pManager.AddTextParameter("Json Presentation of Scene", "J_Scene", "Json Presentation of Scene", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -63,54 +56,90 @@ namespace GHva3c
         {
             bool write = false;
             string myFilePath = null;
-            List<GH_String> inMeshGeometry = new List<GH_String>();
-            List<GH_String> inMeshMaterials = new List<GH_String>();
-            List<GH_String> inLineGeometry = new List<GH_String>();
-            List<GH_String> inLineMaterials = new List<GH_String>();
+            List<Element> inElements = new List<Element>();
+
+
 
             //get user inputs
             //user should be able to create a scene contianing only lines, or only meshes, or both.  All geo and material inputs will be optional, and we'll run some defense.
             if (!DA.GetData(0, ref write)) return;
             if (!DA.GetData(1, ref myFilePath)) return;
-            DA.GetDataList(2, inMeshGeometry);
-            DA.GetDataList(3, inMeshMaterials);
-            DA.GetDataList(4, inLineGeometry);
-            DA.GetDataList(5, inLineMaterials);
+            DA.GetDataList(2, inElements);
 
-            #region Input defense
 
-            //input some geometry
-            if (inMeshGeometry.Count < 1 && inLineGeometry.Count < 1)
-            {
-                string err = "The scene must contain at least one mesh or one line.";
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, err);
-                DA.SetData(0, err);
-                return;
-            }
-
-            //make sure there are materials if there is geometry
-            if (inMeshGeometry.Count > 0 && inMeshMaterials.Count < 1)
-            {
-                string err = "You need at least one mesh material in order to create meshes.";
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, err);
-                DA.SetData(0, err);
-                return;
-            }
-            if (inLineGeometry.Count > 0 && inLineMaterials.Count < 1)
-            {
-                string err = "You need at least one line material in order to create lines.";
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, err);
-                DA.SetData(0, err);
-                return;
-            }
+            #region Input management
 
             //if we are not told to run, return
             if (!write)
             {
-                string err = "Set the 'W?' input to true to write the JSON file to disk.";
+                string err = "Set the 'W?' input to true to write the JSON file to disk";
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, err);
                 DA.SetData(0, err);
                 return;
+            }
+
+
+            List<GH_String> inMeshGeometry = new List<GH_String>();
+            List<GH_String> inLineGeometry = new List<GH_String>();
+            List<GH_String> inViews = new List<GH_String>();
+
+            List<GH_String> inMeshMaterial = new List<GH_String>();
+            List<GH_String> inLineMaterial = new List<GH_String>();
+
+            List<GH_String> inMeshLayer = new List<GH_String>();
+            List<GH_String> inLineLayer = new List<GH_String>();
+
+            Dictionary<string, List<Element>> definitionLayers = new Dictionary<string, List<Element>>();
+
+            foreach (Element e in inElements)
+            {
+                if (e == null) continue;
+                GH_String g = new GH_String();
+                g.Value = e.GeometryJson;
+
+                if (e.Type != va3cElementType.Camera)
+                {
+                    GH_String m = new GH_String();
+                    m.Value = e.Material.MaterialJson;
+
+                    string layerName = "";
+                    if (e.Layer == null) layerName = "Default";
+                    else layerName = e.Layer.Name;
+
+                    GH_String l = new GH_String();
+                    l.Value = layerName;
+                    
+
+                    if (e.Type == va3cElementType.Mesh)
+                    {
+                        inMeshGeometry.Add(g);
+                        inMeshMaterial.Add(m);
+                        inMeshLayer.Add(l);
+                    }
+
+                    if (e.Type == va3cElementType.Line)
+                    {
+                        inLineGeometry.Add(g);
+                        inLineMaterial.Add(m);
+                        inLineLayer.Add(l);
+                    }
+                    
+                    
+
+                    if (!definitionLayers.Keys.Contains(layerName))
+                    {
+                        List<Element> layerElements = new List<Element>();
+                        definitionLayers.Add(layerName, layerElements);
+                    }
+
+                    definitionLayers[layerName].Add(e);
+
+
+                }
+                else
+                {
+                    inViews.Add(g);
+                }
             }
 
             #endregion
@@ -176,16 +205,14 @@ namespace GHva3c
             try
             {
                 //create json from lists of json:
-                string outJSON = sceneJSON(inMeshGeometry, inMeshMaterials, inLineGeometry, inLineMaterials);
+                string outJSON = sceneJSON(inMeshGeometry, inMeshMaterial, inMeshLayer, inLineGeometry, inLineMaterial,inLineLayer, inViews, definitionLayers);
                 outJSON = outJSON.Replace("OOO", "object");
-
 
                 //write the file to disk
                 File.WriteAllText(myFilePath, outJSON);
 
                 //report success
                 DA.SetData(0, "JSON file written successfully!");
-                DA.SetData(1, outJSON);
             }
             catch (Exception e)
             {
@@ -196,17 +223,8 @@ namespace GHva3c
             }
         }
 
-        private string sceneJSON(List<GH_String> meshList, List<GH_String> meshMaterialList, List<GH_String> linesList, List<GH_String> linesMaterialList)
+        private string sceneJSON(List<GH_String> meshList, List<GH_String> meshMaterialList, List<GH_String> meshLayerList, List<GH_String> linesList, List<GH_String> linesMaterialList, List<GH_String> lineLayerList, List<GH_String> viewList, Dictionary<string, List<Element>> defLayers)
         {
-            //defense - if the material lists are longer than the geometry lists, trim them to be the same length
-            if (meshMaterialList.Count > meshList.Count)
-            {
-                meshMaterialList.RemoveRange(meshList.Count - 1, meshMaterialList.Count - meshList.Count);
-            }
-            if (linesMaterialList.Count > linesList.Count)
-            {
-                linesMaterialList.RemoveRange(linesList.Count - 1, linesMaterialList.Count - linesList.Count);
-            }
 
             //create a dynamic object to populate
             dynamic jason = new ExpandoObject();
@@ -217,80 +235,75 @@ namespace GHva3c
             jason.metadata.type = "Object";
             jason.metadata.generator = "vA3C_Grasshopper_Exporter";
 
+            int size = meshList.Count + linesList.Count;
+
             //populate mesh geometries:
-            jason.geometries = new object[meshList.Count + linesList.Count];   //array for geometry - both lines and meshes
+            jason.geometries = new object[size];   //array for geometry - both lines and meshes
+            jason.materials = new object[size];  //array for materials - both lines and meshes
+
+
+            #region Mesh management
             int meshCounter = 0;
-            jason.materials = new object[meshMaterialList.Count + linesMaterialList.Count];  //array for materials - both lines and meshes
-            int matCounter = 0;
             Dictionary<string, object> MeshDict = new Dictionary<string, object>();
             Dictionary<string, va3cAttributesCatcher> attrDict = new Dictionary<string, va3cAttributesCatcher>();
+
+
             foreach (GH_String m in meshList)
             {
-                //get the last material if the list lengths don't match
-                if (matCounter == meshMaterialList.Count)
-                {
-                    matCounter = meshMaterialList.Count - 1;
-                }
-
                 //deserialize the geometry and attributes, and add them to our object
                 va3cGeometryCatcher c = JsonConvert.DeserializeObject<va3cGeometryCatcher>(m.Value);
                 va3cAttributesCatcher ac = JsonConvert.DeserializeObject<va3cAttributesCatcher>(m.Value);
                 jason.geometries[meshCounter] = c;
                 attrDict.Add(c.uuid, ac);
+                
 
                 //now that we have different types of materials, we need to know which catcher to call
                 //use the va3cBaseMaterialCatcher class to determine a material's type, then call the appropriate catcher
                 //object mc;
-                va3cBaseMaterialCatcher baseCatcher = JsonConvert.DeserializeObject<va3cBaseMaterialCatcher>(meshMaterialList[matCounter].Value);
+                va3cBaseMaterialCatcher baseCatcher = JsonConvert.DeserializeObject<va3cBaseMaterialCatcher>(meshMaterialList[meshCounter].Value);
                 if (baseCatcher.type == "MeshFaceMaterial")
                 {
-                    va3cMeshFaceMaterialCatcher mc = JsonConvert.DeserializeObject<va3cMeshFaceMaterialCatcher>(meshMaterialList[matCounter].Value);
-                    jason.materials[matCounter] = mc;
+                    va3cMeshFaceMaterialCatcher mc = JsonConvert.DeserializeObject<va3cMeshFaceMaterialCatcher>(meshMaterialList[meshCounter].Value);
+                    jason.materials[meshCounter] = mc;
                     MeshDict.Add(c.uuid, mc.uuid);
                 }
                 if (baseCatcher.type == "MeshPhongMaterial")
                 {
-                    va3cMeshPhongMaterialCatcher mc = JsonConvert.DeserializeObject<va3cMeshPhongMaterialCatcher>(meshMaterialList[matCounter].Value);
-                    jason.materials[matCounter] = mc;
+                    va3cMeshPhongMaterialCatcher mc = JsonConvert.DeserializeObject<va3cMeshPhongMaterialCatcher>(meshMaterialList[meshCounter].Value);
+                    jason.materials[meshCounter] = mc;
                     MeshDict.Add(c.uuid, mc.uuid);
                 }
                 if (baseCatcher.type == "MeshLambertMaterial")
                 {
-                    va3cMeshLambertMaterialCatcher mc = JsonConvert.DeserializeObject<va3cMeshLambertMaterialCatcher>(meshMaterialList[matCounter].Value);
-                    jason.materials[matCounter] = mc;
+                    va3cMeshLambertMaterialCatcher mc = JsonConvert.DeserializeObject<va3cMeshLambertMaterialCatcher>(meshMaterialList[meshCounter].Value);
+                    jason.materials[meshCounter] = mc;
                     MeshDict.Add(c.uuid, mc.uuid);
                 }
                 if (baseCatcher.type == "MeshBasicMaterial")
                 {
-                    va3cMeshBasicMaterialCatcher mc = JsonConvert.DeserializeObject<va3cMeshBasicMaterialCatcher>(meshMaterialList[matCounter].Value);
-                    jason.materials[matCounter] = mc;
+                    va3cMeshBasicMaterialCatcher mc = JsonConvert.DeserializeObject<va3cMeshBasicMaterialCatcher>(meshMaterialList[meshCounter].Value);
+                    jason.materials[meshCounter] = mc;
                     MeshDict.Add(c.uuid, mc.uuid);
                 }
-                matCounter++;
                 meshCounter++;
 
-
             }
+            #endregion
 
+            #region Line management
             //populate line geometries
             int lineCounter = meshCounter;
             int lineMaterialCounter = 0;
             Dictionary<string, object> LineDict = new Dictionary<string, object>();
             foreach (GH_String l in linesList)
             {
-                //get the last material if the list lengths don't match
-                if (lineMaterialCounter == linesMaterialList.Count)
-                {
-                    lineMaterialCounter = linesMaterialList.Count - 1;
-                }
-
                 //deserialize the line and the material
                 va3cLineCatcher lc = JsonConvert.DeserializeObject<va3cLineCatcher>(l.Value);
-                va3cLineBasicMaterialCatcher lmc = 
+                va3cLineBasicMaterialCatcher lmc =
                     JsonConvert.DeserializeObject<va3cLineBasicMaterialCatcher>(linesMaterialList[lineMaterialCounter].Value);
                 //add the deserialized values to the jason object
                 jason.geometries[lineCounter] = lc;
-                jason.materials[matCounter + lineMaterialCounter] = lmc;
+                jason.materials[meshCounter + lineMaterialCounter] = lmc;
 
                 //populate dict to match up materials and lines
                 LineDict.Add(lc.uuid, lmc.uuid);
@@ -299,7 +312,30 @@ namespace GHva3c
                 lineCounter++;
                 lineMaterialCounter++;
             }
+            #endregion
 
+
+            #region Camera management
+            //populate line geometries
+            int viewCounter = 0;
+
+            Dictionary<string, List<object>> viewDict = new Dictionary<string, List<object>>();
+            foreach (GH_String l in viewList)
+            {
+                //deserialize the line and the material
+                va3cCameraCatcher lc = JsonConvert.DeserializeObject<va3cCameraCatcher>(l.Value);
+
+                List<object> viewSettings = new List<object>();
+                viewSettings.Add(lc.eye);
+                viewSettings.Add(lc.target);
+
+                viewDict.Add(lc.name, viewSettings);
+
+                //increment counters
+                viewCounter++;
+
+            }
+            #endregion
 
             jason.OOO = new ExpandoObject();
             //create scene:
@@ -308,6 +344,9 @@ namespace GHva3c
             int[] numbers = new int[16] { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
             jason.OOO.matrix = numbers;
             jason.OOO.children = new object[meshList.Count + linesList.Count];
+            jason.OOO.userData = new ExpandoObject();
+
+            
 
             //create childern
             //loop over meshes and lines
@@ -324,6 +363,7 @@ namespace GHva3c
                 jason.OOO.children[i].userData = attrDict[g].userData;
                 i++;
             }
+            int lineCount = 0;
             foreach (var l in LineDict.Keys)
             {
                 jason.OOO.children[i] = new ExpandoObject();
@@ -333,7 +373,31 @@ namespace GHva3c
                 jason.OOO.children[i].geometry = l;
                 jason.OOO.children[i].material = LineDict[l];
                 jason.OOO.children[i].matrix = numbers;
+                jason.OOO.children[i].userData = new ExpandoObject();
+                jason.OOO.children[i].userData.layer = lineLayerList[lineCount].Value;
                 i++;
+                lineCount++;
+            }
+
+            jason.OOO.userData.views = new object[viewList.Count];
+            int j = 0;
+            foreach (var n in viewDict.Keys)
+            {
+                jason.OOO.userData.views[j] = new ExpandoObject();
+                jason.OOO.userData.views[j].name = n;
+                jason.OOO.userData.views[j].eye = viewDict[n][0];
+                jason.OOO.userData.views[j].target = viewDict[n][1];
+
+                j++;
+            }
+
+            jason.OOO.userData.layers = new object[defLayers.Keys.Count];
+            int li = 0;
+            foreach (var n in defLayers.Keys)
+            {
+                jason.OOO.userData.layers[li] = new ExpandoObject();
+                jason.OOO.userData.layers[li].name = n;
+                li++;
             }
 
 
@@ -370,7 +434,7 @@ namespace GHva3c
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("{065f9b89-44fd-4660-aba8-f4211e5e2ef9}"); }
+            get { return new Guid("{9e0fb676-f7a2-41b2-bf39-1dbdb9e8478d}"); }
         }
     }
 }
