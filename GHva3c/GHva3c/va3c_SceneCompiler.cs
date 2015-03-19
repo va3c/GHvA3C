@@ -108,7 +108,7 @@ namespace GHva3c
 
                     GH_String l = new GH_String();
                     l.Value = layerName;
-                    
+
 
                     if (e.Type == va3cElementType.Mesh)
                     {
@@ -123,8 +123,8 @@ namespace GHva3c
                         inLineMaterial.Add(m);
                         inLineLayer.Add(l);
                     }
-                    
-                    
+
+
 
                     if (!definitionLayers.Keys.Contains(layerName))
                     {
@@ -205,7 +205,7 @@ namespace GHva3c
             try
             {
                 //create json from lists of json:
-                string outJSON = sceneJSON(inMeshGeometry, inMeshMaterial, inMeshLayer, inLineGeometry, inLineMaterial,inLineLayer, inViews, definitionLayers);
+                string outJSON = sceneJSON(inMeshGeometry, inMeshMaterial, inMeshLayer, inLineGeometry, inLineMaterial, inLineLayer, inViews, definitionLayers);
                 outJSON = outJSON.Replace("OOO", "object");
 
                 //write the file to disk
@@ -250,12 +250,13 @@ namespace GHva3c
 
             foreach (GH_String m in meshList)
             {
+                bool alreadyExists = false;
                 //deserialize the geometry and attributes, and add them to our object
                 va3cGeometryCatcher c = JsonConvert.DeserializeObject<va3cGeometryCatcher>(m.Value);
                 va3cAttributesCatcher ac = JsonConvert.DeserializeObject<va3cAttributesCatcher>(m.Value);
                 jason.geometries[meshCounter] = c;
                 attrDict.Add(c.uuid, ac);
-                
+
 
                 //now that we have different types of materials, we need to know which catcher to call
                 //use the va3cBaseMaterialCatcher class to determine a material's type, then call the appropriate catcher
@@ -264,30 +265,118 @@ namespace GHva3c
                 if (baseCatcher.type == "MeshFaceMaterial")
                 {
                     va3cMeshFaceMaterialCatcher mc = JsonConvert.DeserializeObject<va3cMeshFaceMaterialCatcher>(meshMaterialList[meshCounter].Value);
-                    jason.materials[meshCounter] = mc;
+
+                    foreach (var existingMaterial in jason.materials)
+                    {
+                        try
+                        {
+                            if (existingMaterial.type == "MeshFaceMaterial")
+                            {
+                                //check if all the properties match a material that already exists
+                                if (mc.materials == existingMaterial.materials)
+                                {
+                                    mc.uuid = existingMaterial.uuid;
+                                    alreadyExists = true;
+                                    break;
+                                }
+                            }
+                        }
+                        catch { }
+                    }
+                    //only add it if it does not exist
+                    if (!alreadyExists) jason.materials[meshCounter] = mc;
                     MeshDict.Add(c.uuid, mc.uuid);
                 }
                 if (baseCatcher.type == "MeshPhongMaterial")
                 {
                     va3cMeshPhongMaterialCatcher mc = JsonConvert.DeserializeObject<va3cMeshPhongMaterialCatcher>(meshMaterialList[meshCounter].Value);
-                    jason.materials[meshCounter] = mc;
+
+                    foreach (var existingMaterial in jason.materials)
+                    {
+                        try
+                        {
+                            if (existingMaterial.type == "MeshPhongMaterial")
+                            {
+                                //check if all the properties match a material that already exists
+                                if (mc.color == existingMaterial.color && mc.ambient == existingMaterial.ambient && mc.emissive == existingMaterial.emissive
+                                     && mc.side == existingMaterial.side && mc.opacity == existingMaterial.opacity && mc.shininess == existingMaterial.shininess 
+                                    && mc.specular == existingMaterial.specular && mc.transparent == existingMaterial.transparent && mc.wireframe == existingMaterial.wireframe)
+                                {
+                                    mc.uuid = existingMaterial.uuid;
+                                    alreadyExists = true;
+                                    break;
+                                }
+                            }
+                        }
+                        catch { }
+                    }
+                    //only add it if it does not exist
+                    if (!alreadyExists) jason.materials[meshCounter] = mc;
+                    
+                    
                     MeshDict.Add(c.uuid, mc.uuid);
                 }
                 if (baseCatcher.type == "MeshLambertMaterial")
                 {
                     va3cMeshLambertMaterialCatcher mc = JsonConvert.DeserializeObject<va3cMeshLambertMaterialCatcher>(meshMaterialList[meshCounter].Value);
-                    jason.materials[meshCounter] = mc;
+
+                    foreach (var existingMaterial in jason.materials)
+                    {
+                        try
+                        {
+                            if (existingMaterial.type == "MeshLambertMaterial")
+                            {
+                                //check if all the properties match a material that already exists
+                                if (mc.color == existingMaterial.color && mc.ambient == existingMaterial.ambient && mc.emissive == existingMaterial.emissive
+                                    && mc.side == existingMaterial.side && mc.opacity == existingMaterial.opacity && mc.shading == existingMaterial.shading)
+                                {
+                                    mc.uuid = existingMaterial.uuid;
+                                    alreadyExists = true;
+                                    break;
+                                }
+                            }
+                        }
+                        catch 
+                        {}
+                    }
+                    //only add it if it does not exist
+                    if(!alreadyExists) jason.materials[meshCounter] = mc;
                     MeshDict.Add(c.uuid, mc.uuid);
                 }
                 if (baseCatcher.type == "MeshBasicMaterial")
                 {
                     va3cMeshBasicMaterialCatcher mc = JsonConvert.DeserializeObject<va3cMeshBasicMaterialCatcher>(meshMaterialList[meshCounter].Value);
-                    jason.materials[meshCounter] = mc;
+
+                    foreach (var existingMaterial in jason.materials)
+                    {
+                        try
+                        {
+                            if (existingMaterial.type == "MeshBasicMaterial")
+                            {
+                                //check if all the properties match a material that already exists
+                                if (
+                                    mc.color == existingMaterial.color && mc.transparent == existingMaterial.transparent
+                                    && mc.side == existingMaterial.side && mc.opacity == existingMaterial.opacity)
+                                {
+                                    mc.uuid = existingMaterial.uuid;
+                                    alreadyExists = true;
+                                    break;
+                                }
+                            }
+                        }
+                        catch
+                        { }
+                    }
+                    //only add it if it does not exist
+                    if (!alreadyExists) jason.materials[meshCounter] = mc;
                     MeshDict.Add(c.uuid, mc.uuid);
                 }
                 meshCounter++;
 
             }
+            
+            
+            
             #endregion
 
             #region Line management
@@ -297,13 +386,36 @@ namespace GHva3c
             Dictionary<string, object> LineDict = new Dictionary<string, object>();
             foreach (GH_String l in linesList)
             {
+                bool alreadyExists = false;
                 //deserialize the line and the material
                 va3cLineCatcher lc = JsonConvert.DeserializeObject<va3cLineCatcher>(l.Value);
-                va3cLineBasicMaterialCatcher lmc =
-                    JsonConvert.DeserializeObject<va3cLineBasicMaterialCatcher>(linesMaterialList[lineMaterialCounter].Value);
+                va3cLineBasicMaterialCatcher lmc = JsonConvert.DeserializeObject<va3cLineBasicMaterialCatcher>(linesMaterialList[lineMaterialCounter].Value);
                 //add the deserialized values to the jason object
                 jason.geometries[lineCounter] = lc;
-                jason.materials[meshCounter + lineMaterialCounter] = lmc;
+
+
+                foreach (var existingMaterial in jason.materials)
+                {
+                    try
+                    {
+                        if (existingMaterial.type == "LineBasicMaterial")
+                        {
+                            //check if all the properties match a material that already exists
+                            if (
+                                lmc.color == existingMaterial.color && lmc.linewidth == existingMaterial.linewidth
+                                 && lmc.opacity == existingMaterial.opacity)
+                            {
+                                lmc.uuid = existingMaterial.uuid;
+                                alreadyExists = true;
+                                break;
+                            }
+                        }
+                    }
+                    catch
+                    { }
+                }
+                //only add it if it does not exist
+                if(!alreadyExists) jason.materials[meshCounter + lineMaterialCounter] = lmc;
 
                 //populate dict to match up materials and lines
                 LineDict.Add(lc.uuid, lmc.uuid);
@@ -314,6 +426,11 @@ namespace GHva3c
             }
             #endregion
 
+
+            //make a new array that has the correct size according to the number of materials in the scene
+            object[] myMaterials = jason.materials;
+            myMaterials = myMaterials.Where(mat => mat != null).ToArray();
+            jason.materials = myMaterials;
 
             #region Camera management
             //populate line geometries
@@ -346,7 +463,7 @@ namespace GHva3c
             jason.OOO.children = new object[meshList.Count + linesList.Count];
             jason.OOO.userData = new ExpandoObject();
 
-            
+
 
             //create childern
             //loop over meshes and lines
