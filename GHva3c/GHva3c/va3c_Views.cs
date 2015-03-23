@@ -113,15 +113,15 @@ namespace GHva3c
 
             jason.eye = new ExpandoObject();
             //populate data object properties
-            jason.eye.X = Math.Round(E.X, 5);
-            jason.eye.Y = Math.Round(E.Y, 5);
-            jason.eye.Z = Math.Round(E.Z, 5);
+            jason.eye.X = Math.Round(E.X * -1, 5);
+            jason.eye.Y = Math.Round(E.Z, 5);
+            jason.eye.Z = Math.Round(E.Y, 5);
             
             jason.target = new ExpandoObject();
             //populate data object properties
-            jason.target.X = Math.Round(T.X, 5);
-            jason.target.Y = Math.Round(T.Y, 5);
-            jason.target.Z = Math.Round(T.Z, 5);
+            jason.target.X = Math.Round(T.X * -1, 5);
+            jason.target.Y = Math.Round(T.Z, 5);
+            jason.target.Z = Math.Round(T.Y, 5);
             
             //return
             return JsonConvert.SerializeObject(jason);
